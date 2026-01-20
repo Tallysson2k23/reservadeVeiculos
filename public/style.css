@@ -182,13 +182,48 @@ body{
 /* =====================================================
    AJUSTE EXTRA PARA CELULAR
 ===================================================== */
+/* =====================================================
+   MOBILE — AUMENTAR TUDO
+===================================================== */
 
 @media (max-width:480px){
+
+  .container{
+    padding:15px;
+  }
+
+  .card{
+    padding:24px;                 /* mais espaço */
+    border-radius:18px;
+  }
+
   .card img{
-    height:180px;
+    height:280px;                 /* 🔥 imagem bem maior */
+    margin-bottom:20px;
   }
 
   .card b{
-    font-size:16px;
+    font-size:22px;               /* nome do veículo */
+  }
+
+  .card p{
+    font-size:18px;               /* placa e status */
+    margin:6px 0;
+  }
+
+  .card button{
+    padding:16px;                 /* botões grandes */
+    font-size:18px;
+    border-radius:10px;
+  }
+
+  .topo h2{
+    font-size:20px;
+  }
+
+  #adminBtn,
+  #logout{
+    padding:10px 16px;
+    font-size:14px;
   }
 }
