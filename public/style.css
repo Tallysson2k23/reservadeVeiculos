@@ -354,3 +354,34 @@ body{
   color:#94a3b8;
   font-size:14px;
 }
+
+/* ===============================
+   MANTER CONECTADO (LOGIN)
+================================ */
+
+.remember-container{
+  display:flex;
+  justify-content:flex-start;
+  margin-top:10px;
+  margin-bottom:15px;
+}
+
+.remember{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:14px;
+  color:#94a3b8;
+  cursor:pointer;
+}
+
+.remember input[type="checkbox"]{
+  width:16px;
+  height:16px;
+  accent-color:#2563eb; /* azul bonito */
+  cursor:pointer;
+}
+
+.remember span{
+  user-select:none;
+}

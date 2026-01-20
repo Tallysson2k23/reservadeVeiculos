@@ -1,28 +1,35 @@
 import { auth } from "./firebase.js";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import {
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-const btnLogin = document.getElementById("login");
-const btnCadastro = document.getElementById("cadastrar");
+const email = document.getElementById("email");
+const senha = document.getElementById("senha");
+const loginBtn = document.getElementById("login");
+const rememberMe = document.getElementById("rememberMe");
 
-if(btnCadastro){
-btnCadastro.onclick = () => {
-  const email = document.getElementById("email").value;
-  const senha = document.getElementById("senha").value;
+loginBtn.onclick = async () => {
+  try {
+    // 🔑 Define persistência baseada na caixinha
+    const persistence = rememberMe.checked
+      ? browserLocalPersistence     // mantém logado
+      : browserSessionPersistence;  // sessão temporária
 
-  createUserWithEmailAndPassword(auth, email, senha)
-    .then(() => alert("Usuário criado!"))
-    .catch(e => alert(e.message));
-}
-}
+    await setPersistence(auth, persistence);
 
-if(btnLogin){
-btnLogin.onclick = () => {
-  const email = document.getElementById("email").value;
-  const senha = document.getElementById("senha").value;
+    await signInWithEmailAndPassword(
+      auth,
+      email.value,
+      senha.value
+    );
 
-  signInWithEmailAndPassword(auth, email, senha)
-    .then(() => window.location.href = "veiculos.html")
-    .catch(e => alert("Erro: " + e.message));
-}
-}
+    window.location.href = "veiculos.html";
+
+  } catch (error) {
+    alert("Erro ao fazer login");
+    console.error(error);
+  }
+};
