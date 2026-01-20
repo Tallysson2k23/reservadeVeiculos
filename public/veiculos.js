@@ -1,78 +1,147 @@
 import { db, auth } from "./firebase.js";
-import { 
-  collection, getDocs, doc, updateDoc, addDoc, serverTimestamp, getDoc 
+import {
+  collection, getDocs, doc, updateDoc, addDoc,
+  serverTimestamp, getDoc, query, where
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const lista = document.getElementById("lista");
 const adminBtn = document.getElementById("adminBtn");
+const logoutBtn = document.getElementById("logout");
 
-async function carregarVeiculos(){
-  const snap = await getDocs(collection(db,"veiculos"));
+/* =====================================================
+   LOGOUT
+===================================================== */
+if (logoutBtn) {
+  logoutBtn.onclick = () => {
+    signOut(auth).then(() => {
+      window.location.href = "index.html";
+    });
+  };
+}
+
+/* =====================================================
+   VERIFICA SE USUÁRIO JÁ TEM VEÍCULO ATIVO
+===================================================== */
+async function usuarioJaTemVeiculo(email) {
+  const q = query(
+    collection(db, "veiculos"),
+    where("usuarioAtual", "==", email)
+  );
+
+  const snap = await getDocs(q);
+  return !snap.empty;
+}
+
+/* =====================================================
+   CARREGAR VEÍCULOS
+===================================================== */
+async function carregarVeiculos() {
+  const snap = await getDocs(collection(db, "veiculos"));
   lista.innerHTML = "";
 
   snap.forEach(v => {
     const dados = v.data();
+    const indisponivel = dados.status !== "disponivel";
 
     lista.innerHTML += `
       <div class="card">
-        <img src="${dados.imagem}" width="200"><br>
-        <b>${dados.modelo}</b><br>
-        Placa: ${dados.placa}<br>
-        Status: ${dados.status}<br><br>
+        <img src="${dados.imagem}">
+        <b>${dados.modelo}</b>
+        <p>Placa: ${dados.placa}</p>
+        <p>Status: ${dados.status}</p>
 
-        <button ${dados.status !== "disponivel" ? "disabled" : ""} onclick="solicitar('${v.id}')">
-          Solicitar
+        <button
+          class="${indisponivel ? 'btn-indisponivel' : ''}"
+          ${indisponivel ? "disabled" : ""}
+          onclick="solicitar('${v.id}')">
+          ${indisponivel ? "INDISPONÍVEL" : "Solicitar"}
         </button>
 
         <button onclick="devolver('${v.id}')">
           Devolver
         </button>
       </div>
-      <hr>
     `;
   });
 }
 
+/* =====================================================
+   SOLICITAR VEÍCULO
+===================================================== */
 window.solicitar = async (id) => {
   const user = auth.currentUser;
-  if(!user) return alert("Faça login novamente");
+  if (!user) {
+    alert("Faça login novamente");
+    return;
+  }
 
-  await updateDoc(doc(db,"veiculos",id),{ status:"indisponivel" });
+  const jaTem = await usuarioJaTemVeiculo(user.email);
+  if (jaTem) {
+    alert("Você já possui um veículo em uso. Devolva antes de solicitar outro.");
+    return;
+  }
 
-  await addDoc(collection(db,"solicitacoes"),{
-    veiculo:id,
-    usuario:user.email,
-    tipo:"retirada",
-    data:serverTimestamp()
+  await updateDoc(doc(db, "veiculos", id), {
+    status: "indisponivel",
+    usuarioAtual: user.email
+  });
+
+  await addDoc(collection(db, "solicitacoes"), {
+    veiculo: id,
+    usuario: user.email,
+    tipo: "retirada",
+    data: serverTimestamp()
   });
 
   carregarVeiculos();
-}
+};
 
+/* =====================================================
+   DEVOLVER VEÍCULO (🔒 REGRA CORRETA AQUI)
+===================================================== */
 window.devolver = async (id) => {
   const user = auth.currentUser;
-  if(!user) return;
+  if (!user) return;
 
-  await updateDoc(doc(db,"veiculos",id),{ status:"disponivel" });
+  const veiculoRef = doc(db, "veiculos", id);
+  const veiculoSnap = await getDoc(veiculoRef);
 
-  await addDoc(collection(db,"solicitacoes"),{
-    veiculo:id,
-    usuario:user.email,
-    tipo:"devolucao",
-    data:serverTimestamp()
+  if (!veiculoSnap.exists()) return;
+
+  const dados = veiculoSnap.data();
+
+  // 🔴 REGRA: só quem solicitou pode devolver
+  if (dados.usuarioAtual !== user.email) {
+    alert("Você não pode devolver um veículo que não foi solicitado por você.");
+    return;
+  }
+
+  await updateDoc(veiculoRef, {
+    status: "disponivel",
+    usuarioAtual: null
+  });
+
+  await addDoc(collection(db, "solicitacoes"), {
+    veiculo: id,
+    usuario: user.email,
+    tipo: "devolucao",
+    data: serverTimestamp()
   });
 
   carregarVeiculos();
-}
+};
 
-// 🔐 Verificar se usuário é admin
-auth.onAuthStateChanged(async (user)=>{
-  if(!user || !adminBtn) return;
+/* =====================================================
+   ADMIN
+===================================================== */
+auth.onAuthStateChanged(async (user) => {
+  if (!user || !adminBtn) return;
 
-  const ref = doc(db,"admins",user.email);
+  const ref = doc(db, "admins", user.email);
   const snap = await getDoc(ref);
 
-  if(snap.exists()){
+  if (snap.exists()) {
     adminBtn.style.display = "block";
   }
 });

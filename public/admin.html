@@ -9,22 +9,35 @@
 
 <body>
 
-<div id="topo">
-  <h2>Dashboard Diário</h2>
-</div>
+<header class="topo">
+  <h2>Dashboard por Data</h2>
+</header>
 
 <div class="admin-container">
-<table class="admin-table">
-<thead>
-<tr>
-<th>Usuário</th>
-<th>Veículo</th>
-<th>Tipo</th>
-<th>Data/Hora</th>
-</tr>
-</thead>
-<tbody id="tabela"></tbody>
-</table>
+
+  <!-- 🔍 FILTRO POR DATA -->
+  <div class="admin-filtros">
+    <label>
+      Selecionar data:
+      <input type="date" id="filtroData">
+    </label>
+
+    <button id="btnBuscar">Buscar</button>
+    <button id="btnHoje">Hoje</button>
+  </div>
+
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Usuário</th>
+        <th>Veículo</th>
+        <th>Ação</th>
+        <th>Data / Hora</th>
+      </tr>
+    </thead>
+    <tbody id="tabela"></tbody>
+  </table>
+
 </div>
 
 <script type="module" src="./admin.js"></script>
