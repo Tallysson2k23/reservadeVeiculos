@@ -1,83 +1,10 @@
-/* ===== LOGIN  ===== */
+/* =====================================================
+   RESET / BASE
+===================================================== */
 
-.login-body{
-  margin:0;
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background: linear-gradient(135deg, #0f172a, #020617);
-  font-family: 'Segoe UI', sans-serif;
+*{
+  box-sizing:border-box;
 }
-
-.login-container{
-  width:100%;
-  display:flex;
-  justify-content:center;
-}
-
-.login-card{
-  background:#0b1220;
-  padding:40px;
-  width:350px;
-  border-radius:12px;
-  box-shadow:0 0 40px rgba(0,0,0,0.4);
-  text-align:center;
-}
-
-.login-card h2{
-  margin:0;
-  color:white;
-  font-size:22px;
-}
-
-.subtitle{
-  color:#94a3b8;
-  margin-bottom:25px;
-}
-
-.login-card input{
-  width:100%;
-  padding:12px;
-  margin:8px 0;
-  border-radius:6px;
-  border:1px solid #1e293b;
-  background:#020617;
-  color:white;
-}
-
-.login-card input::placeholder{
-  color:#64748b;
-}
-
-.login-card button{
-  width:100%;
-  padding:12px;
-  margin-top:15px;
-  border:none;
-  border-radius:6px;
-  background:#2563eb;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.login-card button:hover{
-  background:#1d4ed8;
-}
-
-.login-card .link{
-  margin-top:15px;
-  color:#94a3b8;
-}
-
-.login-card a{
-  color:#3b82f6;
-  text-decoration:none;
-}
-
-
-/* ===== VEÍCULOS MODERNO ===== */
 
 body{
   margin:0;
@@ -86,56 +13,144 @@ body{
   color:white;
 }
 
-#topo{
+/* =====================================================
+   LOGIN / CADASTRO
+===================================================== */
+
+.login-body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: linear-gradient(135deg, #0f172a, #020617);
+}
+
+.login-card{
+  background:#0b1220;
+  padding:40px;
+  width:100%;
+  max-width:380px;
+  border-radius:12px;
+  box-shadow:0 0 40px rgba(0,0,0,0.4);
+  text-align:center;
+}
+
+.login-card input{
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  border-radius:6px;
+  border:1px solid #1e293b;
   background:#020617;
-  padding:20px 40px;
+  color:white;
+}
+
+.login-card button{
+  width:100%;
+  padding:14px;
+  margin-top:15px;
+  border:none;
+  border-radius:6px;
+  background:#2563eb;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* =====================================================
+   TOPO
+===================================================== */
+
+.topo{
+  padding:16px;
   border-bottom:1px solid #0f172a;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.topo h2{
+  margin:0;
+  font-size:18px;
+}
+
+.topo-right{
+  display:flex;
+  gap:8px;
+}
+
+#adminBtn{
+  display:none;
+  background:#0f172a;
+  color:white;
+  border:none;
+  padding:8px 12px;
+  border-radius:6px;
+}
+
+#logout{
+  background:#dc2626;
+  color:white;
+  border:none;
+  padding:8px 12px;
+  border-radius:6px;
+}
+
+/* =====================================================
+   LISTA DE VEÍCULOS (UMA COLUNA)
+===================================================== */
+
+.container{
+  max-width:900px;
+  margin:0 auto;
+  padding:20px;
 }
 
 #lista{
-  display:grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 colunas fixas */
-  gap:25px;
-  padding:30px 40px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
 }
 
-/* Responsividade */
-@media (max-width: 1200px){
-  #lista{
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px){
-  #lista{
-    grid-template-columns: 1fr;
-  }
-}
-
+/* =====================================================
+   CARD DO VEÍCULO (GRANDE E LEGÍVEL)
+===================================================== */
 
 .card{
   background:#0b1220;
-  padding:18px;
-  border-radius:12px;
-  max-width:100%;
+  border-radius:14px;
+  padding:20px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.45);
 }
-
 
 .card img{
-  border-radius:8px;
   width:100%;
-  max-height:160px;
-  object-fit:cover;
-  margin-bottom:10px;
+  height:220px;
+  object-fit:contain;
+  background:#020617;
+  border-radius:10px;
+  margin-bottom:15px;
 }
 
+/* Texto */
+.card b{
+  font-size:18px;
+}
+
+.card p{
+  font-size:15px;
+  margin:4px 0;
+}
+
+/* Botões */
 .card button{
-  margin-top:5px;
-  padding:10px 15px;
+  margin-top:10px;
+  padding:12px;
   border:none;
-  border-radius:6px;
+  border-radius:8px;
+  font-size:15px;
   cursor:pointer;
-  font-weight:bold;
+  width:100%;
 }
 
 .card button:first-of-type{
@@ -143,58 +158,37 @@ body{
   color:white;
 }
 
-.card button:first-of-type:disabled{
-  background:#334155;
-  cursor:not-allowed;
-}
-
 .card button:last-of-type{
   background:#16a34a;
   color:white;
 }
 
-.card button:hover{
-  opacity:0.9;
+.card button:disabled{
+  background:#334155;
 }
 
-hr{
-  border:1px solid #020617;
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer{
+  text-align:center;
+  padding:15px;
+  font-size:13px;
+  color:#64748b;
+  border-top:1px solid #0f172a;
 }
 
+/* =====================================================
+   AJUSTE EXTRA PARA CELULAR
+===================================================== */
 
-/* ===== ADMIN DASHBOARD ===== */
+@media (max-width:480px){
+  .card img{
+    height:180px;
+  }
 
-.admin-container{
-  padding:30px 40px;
-}
-
-.admin-table{
-  width:100%;
-  border-collapse:collapse;
-  background:#0b1220;
-  border-radius:10px;
-  overflow:hidden;
-  box-shadow:0 0 30px rgba(0,0,0,0.4);
-}
-
-.admin-table thead{
-  background:#020617;
-}
-
-.admin-table th{
-  padding:14px;
-  text-align:left;
-  font-size:14px;
-  color:#94a3b8;
-  border-bottom:1px solid #0f172a;
-}
-
-.admin-table td{
-  padding:14px;
-  border-bottom:1px solid #020617;
-  font-size:14px;
-}
-
-.admin-table tr:hover{
-  background:#020617;
+  .card b{
+    font-size:16px;
+  }
 }
