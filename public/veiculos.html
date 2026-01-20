@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Veículos</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+#topo{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.topo-right{
+  display:flex;
+  gap:10px;
+}
+
+#adminBtn{
+  display:none;
+  background:black;
+  color:white;
+  border:none;
+  padding:8px 15px;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+#logout{
+  background:#dc2626;
+  color:white;
+  border:none;
+  padding:8px 15px;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+footer{
+  text-align:center;
+  padding:15px;
+  font-size:13px;
+  color:#64748b;
+}
+</style>
+
+</head>
+<body>
+
+<div id="topo">
+  <h2>Veículos disponíveis</h2>
+
+  <div class="topo-right">
+    <button id="adminBtn" onclick="window.location.href='admin.html'">ADMIN</button>
+    <button id="logout">Sair</button>
+  </div>
+</div>
+
+<div id="lista"></div>
+
+<footer>
+  Desenvolvidor: Tallysson Luis_Dev
+</footer>
+
+<script type="module" src="./veiculos.js"></script>
+</body>
+</html>

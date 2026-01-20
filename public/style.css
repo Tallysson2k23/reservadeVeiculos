@@ -1,0 +1,200 @@
+/* ===== LOGIN  ===== */
+
+.login-body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: linear-gradient(135deg, #0f172a, #020617);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.login-container{
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+
+.login-card{
+  background:#0b1220;
+  padding:40px;
+  width:350px;
+  border-radius:12px;
+  box-shadow:0 0 40px rgba(0,0,0,0.4);
+  text-align:center;
+}
+
+.login-card h2{
+  margin:0;
+  color:white;
+  font-size:22px;
+}
+
+.subtitle{
+  color:#94a3b8;
+  margin-bottom:25px;
+}
+
+.login-card input{
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border-radius:6px;
+  border:1px solid #1e293b;
+  background:#020617;
+  color:white;
+}
+
+.login-card input::placeholder{
+  color:#64748b;
+}
+
+.login-card button{
+  width:100%;
+  padding:12px;
+  margin-top:15px;
+  border:none;
+  border-radius:6px;
+  background:#2563eb;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.login-card button:hover{
+  background:#1d4ed8;
+}
+
+.login-card .link{
+  margin-top:15px;
+  color:#94a3b8;
+}
+
+.login-card a{
+  color:#3b82f6;
+  text-decoration:none;
+}
+
+
+/* ===== VEÍCULOS MODERNO ===== */
+
+body{
+  margin:0;
+  font-family:'Segoe UI', sans-serif;
+  background:#020617;
+  color:white;
+}
+
+#topo{
+  background:#020617;
+  padding:20px 40px;
+  border-bottom:1px solid #0f172a;
+}
+
+#lista{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 colunas fixas */
+  gap:25px;
+  padding:30px 40px;
+}
+
+/* Responsividade */
+@media (max-width: 1200px){
+  #lista{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px){
+  #lista{
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.card{
+  background:#0b1220;
+  padding:18px;
+  border-radius:12px;
+  max-width:100%;
+}
+
+
+.card img{
+  border-radius:8px;
+  width:100%;
+  max-height:160px;
+  object-fit:cover;
+  margin-bottom:10px;
+}
+
+.card button{
+  margin-top:5px;
+  padding:10px 15px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.card button:first-of-type{
+  background:#2563eb;
+  color:white;
+}
+
+.card button:first-of-type:disabled{
+  background:#334155;
+  cursor:not-allowed;
+}
+
+.card button:last-of-type{
+  background:#16a34a;
+  color:white;
+}
+
+.card button:hover{
+  opacity:0.9;
+}
+
+hr{
+  border:1px solid #020617;
+}
+
+
+/* ===== ADMIN DASHBOARD ===== */
+
+.admin-container{
+  padding:30px 40px;
+}
+
+.admin-table{
+  width:100%;
+  border-collapse:collapse;
+  background:#0b1220;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 0 30px rgba(0,0,0,0.4);
+}
+
+.admin-table thead{
+  background:#020617;
+}
+
+.admin-table th{
+  padding:14px;
+  text-align:left;
+  font-size:14px;
+  color:#94a3b8;
+  border-bottom:1px solid #0f172a;
+}
+
+.admin-table td{
+  padding:14px;
+  border-bottom:1px solid #020617;
+  font-size:14px;
+}
+
+.admin-table tr:hover{
+  background:#020617;
+}
