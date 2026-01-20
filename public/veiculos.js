@@ -136,14 +136,23 @@ window.devolver = async (id) => {
    ADMIN
 ===================================================== */
 auth.onAuthStateChanged(async (user) => {
-  if (!user || !adminBtn) return;
+  if (!user) return;
 
-  const ref = doc(db, "admins", user.email);
-  const snap = await getDoc(ref);
+  // 👤 Mostrar usuário logado
+  if (usuarioLogado) {
+    usuarioLogado.textContent = `Usuário: ${user.email}`;
+  }
 
-  if (snap.exists()) {
-    adminBtn.style.display = "block";
+  // 🔐 Admin
+  if (adminBtn) {
+    const ref = doc(db, "admins", user.email);
+    const snap = await getDoc(ref);
+
+    if (snap.exists()) {
+      adminBtn.style.display = "block";
+    }
   }
 });
+
 
 carregarVeiculos();

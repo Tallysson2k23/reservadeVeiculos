@@ -1,6 +1,7 @@
 import { auth } from "./firebase.js";
 import {
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   setPersistence,
   browserLocalPersistence,
   browserSessionPersistence
@@ -9,27 +10,80 @@ import {
 const email = document.getElementById("email");
 const senha = document.getElementById("senha");
 const loginBtn = document.getElementById("login");
+const cadastrarBtn = document.getElementById("cadastrar");
 const rememberMe = document.getElementById("rememberMe");
 
-loginBtn.onclick = async () => {
-  try {
-    // 🔑 Define persistência baseada na caixinha
-    const persistence = rememberMe.checked
-      ? browserLocalPersistence     // mantém logado
-      : browserSessionPersistence;  // sessão temporária
+const loader = document.getElementById("loader");
+const msg = document.getElementById("msg");
 
-    await setPersistence(auth, persistence);
+/* ===============================
+   LOGIN
+================================ */
 
-    await signInWithEmailAndPassword(
-      auth,
-      email.value,
-      senha.value
-    );
+if (loginBtn) {
+  loginBtn.onclick = async () => {
+    try {
+      const persistence = rememberMe && rememberMe.checked
+        ? browserLocalPersistence
+        : browserSessionPersistence;
 
-    window.location.href = "veiculos.html";
+      await setPersistence(auth, persistence);
 
-  } catch (error) {
-    alert("Erro ao fazer login");
-    console.error(error);
-  }
-};
+      await signInWithEmailAndPassword(auth, email.value, senha.value);
+      window.location.href = "veiculos.html";
+
+    } catch (error) {
+      alert("Erro ao fazer login");
+      console.error(error.message);
+    }
+  };
+}
+
+/* ===============================
+   CADASTRO COM LOADER
+================================ */
+
+if (cadastrarBtn) {
+  cadastrarBtn.onclick = async () => {
+    msg.textContent = "";
+    msg.className = "msg";
+
+    if (!email.value || !senha.value) {
+      msg.textContent = "Preencha email e senha";
+      msg.classList.add("error");
+      return;
+    }
+
+    if (senha.value.length < 6) {
+      msg.textContent = "Senha mínima de 6 caracteres";
+      msg.classList.add("error");
+      return;
+    }
+
+    try {
+      cadastrarBtn.disabled = true;
+      loader.classList.remove("hidden");
+
+      await createUserWithEmailAndPassword(
+        auth,
+        email.value,
+        senha.value
+      );
+
+      msg.textContent = "Cadastro realizado com sucesso!";
+      msg.classList.add("success");
+
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 1500);
+
+    } catch (error) {
+      msg.textContent = "Erro ao cadastrar usuário";
+      msg.classList.add("error");
+      console.error(error.message);
+    } finally {
+      loader.classList.add("hidden");
+      cadastrarBtn.disabled = false;
+    }
+  };
+}
