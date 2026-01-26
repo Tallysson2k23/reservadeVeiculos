@@ -442,3 +442,131 @@ body{
   font-size:14px;
   color:#94a3b8;
 }
+
+.btn-login {
+  position: relative;
+  width: 100%;
+  padding: 12px;
+  background: #2563eb;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+/* Efeito de pressionar */
+.btn-login:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+}
+
+/* Texto */
+.btn-login .btn-text {
+  transition: opacity 0.2s;
+}
+
+/* Loader (spinner) */
+.btn-login .loader {
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top: 3px solid white;
+  border-radius: 50%;
+  position: absolute;
+  top: 25%;              /* ← sobe o spinner */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: spin 1s linear infinite;
+  display: none;
+}
+
+
+/* Quando estiver carregando */
+.btn-login.loading .btn-text {
+  opacity: 0;
+}
+
+.btn-login.loading .loader {
+  display: block;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.admin-actions {
+  margin: 15px 0;
+  text-align: right;
+}
+
+.btn-frota {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-frota:hover {
+  background: #1d4ed8;
+}
+
+
+.mural-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 30px;
+}
+
+/* Card do carro */
+.carro-card {
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(0,0,0,.3);
+  transition: transform 0.2s;
+}
+
+.carro-card:hover {
+  transform: scale(1.05);
+}
+
+/* Estados */
+.disponivel {
+  background: #16a34a;
+  color: white;
+}
+
+.ocupado {
+  background: #dc2626;
+  color: white;
+}
+
+.carro-nome {
+  font-size: 18px;
+}
+
+.carro-status {
+  margin-top: 8px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.btn-voltar {
+  position: absolute;
+  right: 20px;
+  top: 15px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+}

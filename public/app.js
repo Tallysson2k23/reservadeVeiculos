@@ -87,3 +87,19 @@ if (cadastrarBtn) {
     }
   };
 }
+const botao = document.getElementById("login");
+
+botao.addEventListener("click", () => {
+  botao.classList.add("loading");
+  botao.disabled = true;
+
+  // Simula o tempo de login (substitua pela sua lógica real)
+  setTimeout(() => {
+    // Aqui você faz a validação, redireciona, etc.
+    // Exemplo:
+    // window.location.href = "dashboard.html";
+
+    botao.classList.remove("loading");
+    botao.disabled = false;
+  }, 2000);
+});
