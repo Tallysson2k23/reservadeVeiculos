@@ -9,6 +9,7 @@ const tabela = document.getElementById("tabela");
 const filtroData = document.getElementById("filtroData");
 const btnBuscar = document.getElementById("btnBuscar");
 const btnHoje = document.getElementById("btnHoje");
+const adminLoader = document.getElementById("adminLoader");
 
 let registros = [];
 
@@ -28,8 +29,13 @@ async function verificarAdmin(user){
 }
 
 /* =====================================================
-   DATA UTIL
+   DATA UTIL — FUSO LOCAL CORRETO
 ===================================================== */
+function criarDataLocal(yyyy_mm_dd){
+  const [ano, mes, dia] = yyyy_mm_dd.split("-");
+  return new Date(ano, mes - 1, dia);
+}
+
 function inicioDoDia(data){
   return new Date(data.getFullYear(), data.getMonth(), data.getDate(), 0, 0, 0);
 }
@@ -39,9 +45,26 @@ function fimDoDia(data){
 }
 
 /* =====================================================
-   CARREGAR DADOS
+   LOADER
+===================================================== */
+function mostrarLoader(){
+  adminLoader.classList.remove("hidden");
+  btnBuscar.disabled = true;
+  btnHoje.disabled = true;
+}
+
+function esconderLoader(){
+  adminLoader.classList.add("hidden");
+  btnBuscar.disabled = false;
+  btnHoje.disabled = false;
+}
+
+/* =====================================================
+   CARREGAR DADOS DO FIRESTORE
 ===================================================== */
 async function carregarDados(){
+  mostrarLoader();
+
   registros = [];
   tabela.innerHTML = "";
 
@@ -72,6 +95,7 @@ async function carregarDados(){
   }
 
   mostrarHoje();
+  esconderLoader();
 }
 
 /* =====================================================
@@ -121,18 +145,32 @@ function mostrarHoje(){
   filtrarPorData(new Date());
 }
 
+/* =====================================================
+   BOTÕES
+===================================================== */
 btnBuscar.onclick = () => {
   if(!filtroData.value){
     alert("Selecione uma data");
     return;
   }
 
-  filtrarPorData(new Date(filtroData.value));
+  mostrarLoader();
+  const dataLocal = criarDataLocal(filtroData.value);
+
+  setTimeout(() => {
+    filtrarPorData(dataLocal);
+    esconderLoader();
+  }, 300);
 };
 
 btnHoje.onclick = () => {
   filtroData.value = "";
-  mostrarHoje();
+
+  mostrarLoader();
+  setTimeout(() => {
+    mostrarHoje();
+    esconderLoader();
+  }, 300);
 };
 
 /* =====================================================

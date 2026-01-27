@@ -570,3 +570,32 @@ body{
   padding: 8px 14px;
   border-radius: 6px;
 }
+
+/* ===============================
+   LOADER ADMIN
+================================ */
+
+.admin-loader{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:15px;
+  color:#94a3b8;
+}
+
+.admin-loader.hidden{
+  display:none;
+}
+
+.spinner{
+  width:20px;
+  height:20px;
+  border:3px solid #1e293b;
+  border-top:3px solid #2563eb;
+  border-radius:50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin{
+  to { transform: rotate(360deg); }
+}
