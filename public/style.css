@@ -599,3 +599,8 @@ body{
 @keyframes spin{
   to { transform: rotate(360deg); }
 }
+.usuario-veiculo {
+  color: #ffa600;
+  font-weight: bold;
+  margin-top: 5px;
+}

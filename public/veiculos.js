@@ -49,7 +49,13 @@ async function carregarVeiculos() {
         <img src="${dados.imagem}">
         <b>${dados.modelo}</b>
         <p>Placa: ${dados.placa}</p>
-        <p>Status: ${dados.status}</p>
+        
+${
+  dados.status !== "disponivel" && dados.usuarioAtual
+    ? `<p class="usuario-veiculo">Está Com: <strong>${getNomeUsuario(dados.usuarioAtual)}</strong></p>`
+    : ""
+}
+
 
         <button
           class="${indisponivel ? 'btn-indisponivel' : ''}"
@@ -153,6 +159,11 @@ auth.onAuthStateChanged(async (user) => {
     }
   }
 });
+
+function getNomeUsuario(email) {
+  if (!email) return "";
+  return email.split("@")[0];
+}
 
 
 carregarVeiculos();
