@@ -4,7 +4,148 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel Admin</title>
-<link rel="stylesheet" href="style.css">
+
+<style>
+:root{
+  --bg:#0f172a;
+  --card:#111827;
+  --soft:#1f2937;
+  --primary:#3b82f6;
+  --success:#22c55e;
+  --danger:#ef4444;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --radius:14px;
+}
+
+*{box-sizing:border-box;font-family:Inter,system-ui,Arial}
+body{margin:0;background:linear-gradient(180deg,#020617,#0f172a);color:var(--text)}
+
+.topo{
+  background:rgba(17,24,39,.8);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid #1f2937;
+  padding:18px 28px;
+  position:sticky;top:0;z-index:5;
+}
+.topo h2{margin:0;font-weight:600;letter-spacing:.5px}
+
+.admin-container{
+  max-width:1200px;
+  margin:30px auto;
+  padding:0 20px;
+}
+
+/* filtros */
+.admin-filtros{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  align-items:end;
+  background:var(--card);
+  border:1px solid #1f2937;
+  padding:18px;
+  border-radius:var(--radius);
+  margin-bottom:20px;
+}
+.admin-filtros label{
+  display:flex;
+  flex-direction:column;
+  font-size:13px;
+  color:var(--muted);
+}
+.admin-filtros input{
+  margin-top:6px;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid #334155;
+  background:#020617;
+  color:white;
+}
+
+button{
+  border:none;
+  padding:10px 16px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+  transition:.2s;
+}
+button:hover{transform:translateY(-1px);opacity:.9}
+#btnBuscar{background:var(--primary);color:white}
+#btnHoje{background:var(--soft);color:white}
+.btn-frota{background:#6366f1;color:white}
+
+.admin-actions{margin:15px 0}
+
+/* loader */
+.admin-loader{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  margin:20px 0;
+}
+.hidden{display:none}
+.spinner{
+  width:28px;height:28px;border-radius:50%;
+  border:3px solid #1f2937;border-top:3px solid var(--primary);
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* tabela */
+.admin-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0 10px;
+}
+.admin-table thead th{
+  text-align:left;
+  font-size:13px;
+  color:var(--muted);
+  padding:10px 12px;
+}
+.admin-table tbody tr{
+  background:var(--card);
+  border:1px solid #1f2937;
+}
+.admin-table tbody td{
+  padding:16px 12px;
+  border-top:1px solid #1f2937;
+  border-bottom:1px solid #1f2937;
+}
+.admin-table tbody tr td:first-child{
+  border-left:1px solid #1f2937;
+  border-radius:12px 0 0 12px;
+}
+.admin-table tbody tr td:last-child{
+  border-right:1px solid #1f2937;
+  border-radius:0 12px 12px 0;
+}
+
+/* destaque ação */
+.acao-badge{
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.5px;
+}
+.acao-retirada{background:rgba(34,197,94,.15);color:var(--success)}
+.acao-devolucao{background:rgba(239,68,68,.15);color:var(--danger)}
+
+/* responsivo */
+@media(max-width:700px){
+  .admin-table thead{display:none}
+  .admin-table tbody tr{
+    display:block;margin-bottom:14px;padding:12px;border-radius:12px
+  }
+  .admin-table tbody td{
+    display:flex;justify-content:space-between;border:none;padding:8px 0
+  }
+}
+</style>
 </head>
 
 <body>
@@ -15,7 +156,6 @@
 
 <div class="admin-container">
 
-  <!-- 🔍 FILTRO POR DATA -->
   <div class="admin-filtros">
     <label>
       Selecionar data:
@@ -27,15 +167,9 @@
   </div>
   
   <div id="adminLoader" class="admin-loader hidden">
-  <div class="spinner"></div>
-  <p>Buscando registros...</p>
-</div>
-
-<div class="admin-actions">
-  <button class="btn-frota" onclick="window.location.href='carros.html'">
-    Ver carros disponíveis
-  </button>
-</div>
+    <div class="spinner"></div>
+    <p>Buscando registros...</p>
+  </div>
 
   <table class="admin-table">
     <thead>
