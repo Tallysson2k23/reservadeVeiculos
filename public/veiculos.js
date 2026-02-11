@@ -40,8 +40,12 @@ async function carregarVeiculos() {
   const snap = await getDocs(collection(db, "veiculos"));
   lista.innerHTML = "";
 
+  const listaVeiculos = []; // 👈 vamos guardar os dados aqui
+
   snap.forEach(v => {
     const dados = v.data();
+    listaVeiculos.push(dados); // 👈 adiciona para o painel
+
     const indisponivel = dados.status !== "disponivel";
 
     lista.innerHTML += `
@@ -56,7 +60,6 @@ ${
     : ""
 }
 
-
         <button
           class="${indisponivel ? 'btn-indisponivel' : ''}"
           ${indisponivel ? "disabled" : ""}
@@ -70,6 +73,8 @@ ${
       </div>
     `;
   });
+
+  atualizarPainel(listaVeiculos); // 👈 AQUI ATUALIZA O MINI PAINEL
 }
 
 /* =====================================================
@@ -164,6 +169,22 @@ function getNomeUsuario(email) {
   if (!email) return "";
   return email.split("@")[0];
 }
+function atualizarPainel(listaVeiculos) {
+  let disponiveis = 0;
+  let reservados = 0;
+
+  listaVeiculos.forEach(v => {
+    if (v.status === "disponivel") {
+      disponiveis++;
+    } else {
+      reservados++;
+    }
+  });
+
+  document.getElementById("qtdDisponiveis").textContent = disponiveis;
+  document.getElementById("qtdReservados").textContent = reservados;
+}
+
 
 
 carregarVeiculos();
