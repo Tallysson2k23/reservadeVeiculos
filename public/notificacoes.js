@@ -76,7 +76,7 @@ async function enviarParaTodos(titulo, mensagem) {
 /* =====================================================
    AGENDAMENTO 08:00
 ===================================================== */
-cron.schedule("37 10* * *", () => {
+cron.schedule("40 10* * *", () => {
   console.log("Enviando notificação das 08h...");
   enviarParaTodos(
     "Bom dia 🚗",
