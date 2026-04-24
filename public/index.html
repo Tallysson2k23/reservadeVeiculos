@@ -1,8 +1,81 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Erro de Conexão</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0f172a;
+      color: #f1f5f9;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+      background: #1e293b;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #f87171;
+    }
+
+    p {
+      font-size: 16px;
+      color: #cbd5f5;
+    }
+
+    .btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn:hover {
+      background: #2563eb;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>⚠️ Sem comunicação com o servidor</h1>
+    <p>Não foi possível estabelecer conexão no momento.</p>
+    <p>Verifique sua internet ou tente novamente mais tarde.</p>
+
+    <button class="btn" onclick="location.reload()">
+      Tentar novamente
+    </button>
+  </div>
+
+</body>
+</html>
+
+
+<!--
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
 
-<!-- Google tag (gtag.js) -->
+
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-JHZK3XD997"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -54,3 +127,4 @@
 <script type="module" src="app.js"></script>
 </body>
 </html>
+-->
