@@ -95,10 +95,20 @@ body{
   padding:8px 12px;
   border-radius:6px;
 }
-
 /* =====================================================
    VEÍCULOS — LISTA EM COLUNA
+   TEMA COPA + SÃO JOÃO
 ===================================================== */
+
+body{
+  background:
+    linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)),
+    url("https://images.unsplash.com/photo-1467810563316-b5476525c0f9");
+  background-size:cover;
+  background-attachment:fixed;
+  color:#fff;
+  font-family:'Segoe UI',sans-serif;
+}
 
 .container{
   max-width:900px;
@@ -114,10 +124,29 @@ body{
 
 /* CARD DE VEÍCULO */
 .card{
-  background:#0b1220;
+  background:linear-gradient(
+    135deg,
+    #0f172a,
+    #14532d
+  );
+  border:2px solid #facc15;
   border-radius:14px;
   padding:20px;
-  box-shadow:0 8px 30px rgba(0,0,0,0.45);
+  box-shadow:
+    0 8px 30px rgba(0,0,0,0.45),
+    0 0 20px rgba(250,204,21,0.25);
+  position:relative;
+  overflow:hidden;
+}
+
+/* Bandeirinhas decorativas */
+.card::before{
+  content:"";
+  position:absolute;
+  top:8px;
+  right:10px;
+  font-size:18px;
+  opacity:.8;
 }
 
 .card img{
@@ -127,18 +156,23 @@ body{
   background:#020617;
   border-radius:10px;
   margin-bottom:15px;
+  border:2px solid #facc15;
 }
 
 .card b{
-  font-size:18px;
+  font-size:20px;
   display:block;
+  color:#facc15;
+  margin-bottom:8px;
 }
 
 .card p{
   font-size:15px;
   margin:4px 0;
+  color:#e2e8f0;
 }
 
+/* BOTÕES */
 .card button{
   margin-top:10px;
   padding:12px;
@@ -147,27 +181,46 @@ body{
   font-size:15px;
   cursor:pointer;
   width:100%;
+  font-weight:bold;
+  transition:.3s;
 }
 
+.card button:hover{
+  transform:translateY(-2px);
+}
+
+/* Ver detalhes */
 .card button:first-of-type{
-  background:#2563eb;
+  background:linear-gradient(135deg,#2563eb,#1d4ed8);
   color:white;
 }
 
+/* Reservar */
 .card button:last-of-type{
-  background:#16a34a;
+  background:linear-gradient(135deg,#16a34a,#15803d);
   color:white;
 }
 
+/* Desabilitado */
 .card button:disabled{
   background:#334155;
+  color:#94a3b8;
 }
 
 /* Botão indisponível */
 .btn-indisponivel{
-  background:#dc2626 !important;
+  background:linear-gradient(135deg,#dc2626,#991b1b) !important;
   color:white;
   cursor:not-allowed;
+}
+
+/* Efeito brilho Copa */
+.card:hover{
+  transform:translateY(-3px);
+  transition:.3s;
+  box-shadow:
+    0 12px 35px rgba(0,0,0,0.5),
+    0 0 25px rgba(250,204,21,0.4);
 }
 
 /* =====================================================
