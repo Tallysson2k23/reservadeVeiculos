@@ -117,9 +117,16 @@ async function carregarVeiculos() {
         <p>Placa: ${dados.placa}</p>
         
 ${
-  dados.status !== "disponivel" && dados.usuarioAtual
-    ? `<p class="usuario-veiculo">Está Com: <strong>${getNomeUsuario(dados.usuarioAtual)}</strong></p>`
-    : ""
+    dados.status !== "disponivel" && dados.usuarioAtual
+        ? `
+            <p class="usuario-veiculo">
+                Está com:
+                <strong class="nome-usuario">
+                    ${getNomeUsuario(dados.usuarioAtual)}
+                </strong>
+            </p>
+        `
+        : ""
 }
 
         <button

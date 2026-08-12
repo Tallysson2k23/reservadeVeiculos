@@ -1,682 +1,974 @@
 /* =====================================================
-   RESET / BASE
+   TEMA ESCURO PROFISSIONAL
 ===================================================== */
 
-*{
-  box-sizing:border-box;
-}
+:root {
+    --fundo: #0b1017;
+    --fundo-secundario: #101822;
+    --superficie: #151f2b;
+    --superficie-hover: #192634;
+    --campo: #0f1720;
 
-body{
-  margin:0;
-  font-family:'Segoe UI', sans-serif;
-  background:#020617;
-  color:white;
+    --texto: #f1f5f9;
+    --texto-secundario: #9baabc;
+    --texto-suave: #6f8195;
+
+    --borda: #253344;
+    --borda-hover: #3a4b60;
+
+    --azul: #3b82f6;
+    --azul-hover: #2563eb;
+
+    --verde: #22a861;
+    --verde-hover: #188a4d;
+
+    --vermelho: #dc3b45;
+    --vermelho-hover: #bd2832;
+
+    --laranja: #ff7a00;
+
+    --sombra: 0 4px 14px rgba(0, 0, 0, 0.25);
+    --sombra-hover: 0 9px 24px rgba(0, 0, 0, 0.35);
 }
 
 /* =====================================================
-   LOGIN / CADASTRO
+   RESET
 ===================================================== */
 
-.login-body{
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background: linear-gradient(135deg, #0f172a, #020617);
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
-.login-card{
-  background:#0b1220;
-  padding:40px;
-  width:100%;
-  max-width:380px;
-  border-radius:12px;
-  box-shadow:0 0 40px rgba(0,0,0,0.4);
-  text-align:center;
+html {
+    min-height: 100%;
+    scroll-behavior: smooth;
 }
 
-.login-card input{
-  width:100%;
-  padding:14px;
-  margin:10px 0;
-  border-radius:6px;
-  border:1px solid #1e293b;
-  background:#020617;
-  color:white;
+body {
+    min-height: 100vh;
+    margin: 0;
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(38, 61, 82, 0.22),
+            transparent 450px
+        ),
+        var(--fundo);
+    color: var(--texto);
+    font-family: "Segoe UI", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
-.login-card button{
-  width:100%;
-  padding:14px;
-  margin-top:15px;
-  border:none;
-  border-radius:6px;
-  background:#2563eb;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}
+
+img {
+    max-width: 100%;
+}
+
+.hidden {
+    display: none !important;
 }
 
 /* =====================================================
-   TOPO (VEÍCULOS / ADMIN)
+   LOGIN E CADASTRO
 ===================================================== */
 
-.topo{
-  padding:16px 20px;
-  border-bottom:1px solid #0f172a;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.login-body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(59, 130, 246, 0.14),
+            transparent 500px
+        ),
+        var(--fundo);
 }
 
-.topo h2{
-  margin:0;
-  font-size:18px;
+.login-card {
+    width: 100%;
+    max-width: 390px;
+    padding: 32px;
+
+    background: var(--superficie);
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.38);
+
+    text-align: center;
 }
 
-.topo-right{
-  display:flex;
-  gap:8px;
+.login-card h1,
+.login-card h2 {
+    margin-top: 0;
+    color: var(--texto);
 }
 
-#adminBtn{
-  display:none;
-  background:#0f172a;
-  color:white;
-  border:none;
-  padding:8px 12px;
-  border-radius:6px;
+.login-card input {
+    width: 100%;
+    min-height: 46px;
+    margin: 8px 0;
+    padding: 11px 13px;
+
+    background: var(--campo);
+    color: var(--texto);
+
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-#logout{
-  background:#dc2626;
-  color:white;
-  border:none;
-  padding:8px 12px;
-  border-radius:6px;
-}
-/* =====================================================
-   VEÍCULOS — LISTA EM COLUNA
-   TEMA COPA + SÃO JOÃO
-===================================================== */
-
-body{
-  background:
-    linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)),
-    url("https://images.unsplash.com/photo-1467810563316-b5476525c0f9");
-  background-size:cover;
-  background-attachment:fixed;
-  color:#fff;
-  font-family:'Segoe UI',sans-serif;
+.login-card input::placeholder {
+    color: var(--texto-suave);
 }
 
-.container{
-  max-width:900px;
-  margin:0 auto;
-  padding:20px;
+.login-card input:focus {
+    border-color: var(--azul);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.13);
 }
 
-#lista{
-  display:flex;
-  flex-direction:column;
-  gap:20px;
+.login-card button {
+    width: 100%;
+    min-height: 46px;
+    margin-top: 14px;
+    padding: 11px 14px;
+
+    background: var(--azul);
+    color: #ffffff;
+
+    border: none;
+    border-radius: 8px;
+
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        transform 0.1s ease;
 }
 
-/* CARD DE VEÍCULO */
-.card{
-  background:linear-gradient(
-    135deg,
-    #0f172a,
-    #14532d
-  );
-  border:2px solid #facc15;
-  border-radius:14px;
-  padding:20px;
-  box-shadow:
-    0 8px 30px rgba(0,0,0,0.45),
-    0 0 20px rgba(250,204,21,0.25);
-  position:relative;
-  overflow:hidden;
+.login-card button:hover {
+    background: var(--azul-hover);
 }
 
-/* Bandeirinhas decorativas */
-.card::before{
-  content:"";
-  position:absolute;
-  top:8px;
-  right:10px;
-  font-size:18px;
-  opacity:.8;
+.login-card button:active {
+    transform: scale(0.98);
 }
 
-.card img{
-  width:100%;
-  height:220px;
-  object-fit:contain;
-  background:#020617;
-  border-radius:10px;
-  margin-bottom:15px;
-  border:2px solid #facc15;
+/* Manter conectado */
+.remember-container {
+    display: flex;
+    justify-content: flex-start;
+    margin: 9px 0 14px;
 }
 
-.card b{
-  font-size:20px;
-  display:block;
-  color:#facc15;
-  margin-bottom:8px;
+.remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--texto-secundario);
+    font-size: 14px;
+    cursor: pointer;
 }
 
-.card p{
-  font-size:15px;
-  margin:4px 0;
-  color:#e2e8f0;
+.remember input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+
+    accent-color: var(--azul);
+    cursor: pointer;
 }
 
-/* BOTÕES */
-.card button{
-  margin-top:10px;
-  padding:12px;
-  border:none;
-  border-radius:8px;
-  font-size:15px;
-  cursor:pointer;
-  width:100%;
-  font-weight:bold;
-  transition:.3s;
+.remember span {
+    user-select: none;
 }
 
-.card button:hover{
-  transform:translateY(-2px);
-}
-
-/* Ver detalhes */
-.card button:first-of-type{
-  background:linear-gradient(135deg,#2563eb,#1d4ed8);
-  color:white;
-}
-
-/* Reservar */
-.card button:last-of-type{
-  background:linear-gradient(135deg,#16a34a,#15803d);
-  color:white;
-}
-
-/* Desabilitado */
-.card button:disabled{
-  background:#334155;
-  color:#94a3b8;
-}
-
-/* Botão indisponível */
-.btn-indisponivel{
-  background:linear-gradient(135deg,#dc2626,#991b1b) !important;
-  color:white;
-  cursor:not-allowed;
-}
-
-/* Efeito brilho Copa */
-.card:hover{
-  transform:translateY(-3px);
-  transition:.3s;
-  box-shadow:
-    0 12px 35px rgba(0,0,0,0.5),
-    0 0 25px rgba(250,204,21,0.4);
+.usuario-logado {
+    margin: 4px 0 0;
+    color: var(--texto-secundario);
+    font-size: 14px;
 }
 
 /* =====================================================
-   ADMIN DASHBOARD (ISOLADO)
+   MENSAGENS
 ===================================================== */
 
-.admin-container{
-  max-width:1100px;
-  margin:0 auto;
-  padding:30px 20px;
+.msg {
+    margin-top: 12px;
+    font-size: 14px;
+    text-align: center;
 }
 
-.admin-table{
-  width:100%;
-  border-collapse:collapse;
-  background:#0b1220;
-  border-radius:10px;
-  overflow:hidden;
-  box-shadow:0 0 30px rgba(0,0,0,0.4);
+.msg.success {
+    color: #4ade80;
 }
 
-.admin-table thead{
-  background:#020617;
-}
-
-.admin-table th{
-  padding:14px;
-  text-align:left;
-  font-size:14px;
-  color:#94a3b8;
-  border-bottom:1px solid #0f172a;
-}
-
-.admin-table td{
-  padding:14px;
-  font-size:14px;
-  border-bottom:1px solid #020617;
-}
-
-.admin-table tr:hover{
-  background:#020617;
+.msg.error {
+    color: #fb7185;
 }
 
 /* =====================================================
-   FOOTER
+   LOADER DO CADASTRO
 ===================================================== */
 
-.footer{
-  text-align:center;
-  padding:15px;
-  font-size:13px;
-  color:#64748b;
-  border-top:1px solid #0f172a;
+.loader {
+    width: 100%;
+    height: 4px;
+    margin-top: 15px;
+    overflow: hidden;
+
+    background: var(--borda);
+    border-radius: 4px;
+}
+
+.loader::after {
+    content: "";
+    display: block;
+    width: 40%;
+    height: 100%;
+
+    background: var(--azul);
+
+    animation: loading-bar 1s infinite ease-in-out;
+}
+
+@keyframes loading-bar {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(250%);
+    }
 }
 
 /* =====================================================
-   MOBILE — VEÍCULOS
+   BOTÃO DE LOGIN COM CARREGAMENTO
 ===================================================== */
-
-@media (max-width:480px){
-
-  .container{
-    padding:15px;
-  }
-
-  .card{
-    padding:24px;
-    border-radius:18px;
-  }
-
-  .card img{
-    height:280px;
-  }
-
-  .card b{
-    font-size:22px;
-  }
-
-  .card p{
-    font-size:18px;
-  }
-
-  .card button{
-    padding:16px;
-    font-size:18px;
-    border-radius:10px;
-  }
-
-  .topo h2{
-    font-size:20px;
-  }
-
-  #adminBtn,
-  #logout{
-    padding:10px 16px;
-    font-size:14px;
-  }
-}
-
-/* =====================================================
-   FILTROS ADMIN
-===================================================== */
-
-.admin-filtros{
-  display:flex;
-  gap:10px;
-  margin-bottom:20px;
-  flex-wrap:wrap;
-}
-
-.admin-filtros input{
-  padding:10px;
-  border-radius:6px;
-  border:1px solid #1e293b;
-  background:#020617;
-  color:white;
-}
-
-.admin-filtros button{
-  padding:10px 16px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  background:#2563eb;
-  color:white;
-}
-
-.admin-filtros button:last-child{
-  background:#0f172a;
-}
-/* =====================================================
-   FILTROS ADMIN (CORRIGE CALENDÁRIO)
-===================================================== */
-
-.admin-filtros{
-  display:flex;
-  gap:12px;
-  margin-bottom:20px;
-  flex-wrap:wrap;
-  align-items:end;
-}
-
-.admin-filtros label{
-  display:flex;
-  flex-direction:column;
-  font-size:13px;
-  color:#94a3b8;
-}
-
-.admin-filtros input{
-  padding:10px;
-  border-radius:6px;
-  border:1px solid #1e293b;
-  background:#020617;
-  color:white;
-}
-
-/* 🔥 ISSO FAZ O CALENDÁRIO ABRIR */
-.admin-filtros input[type="date"]{
-  color-scheme: dark;
-  cursor:pointer;
-}
-
-.admin-filtros button{
-  padding:10px 16px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  background:#2563eb;
-  color:white;
-}
-
-.admin-filtros button:last-child{
-  background:#0f172a;
-}
-
-/* =====================================================
-   MENSAGEM SEM REGISTROS
-===================================================== */
-
-.admin-vazio{
-  text-align:center;
-  padding:20px;
-  color:#94a3b8;
-  font-size:14px;
-}
-
-/* ===============================
-   MANTER CONECTADO (LOGIN)
-================================ */
-
-.remember-container{
-  display:flex;
-  justify-content:flex-start;
-  margin-top:10px;
-  margin-bottom:15px;
-}
-
-.remember{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:14px;
-  color:#94a3b8;
-  cursor:pointer;
-}
-
-.remember input[type="checkbox"]{
-  width:16px;
-  height:16px;
-  accent-color:#2563eb; /* azul bonito */
-  cursor:pointer;
-}
-
-.remember span{
-  user-select:none;
-}
-
-/* ===============================
-   LOADER (CADASTRO)
-================================ */
-
-.loader{
-  width:100%;
-  height:4px;
-  background:#1e293b;
-  border-radius:4px;
-  overflow:hidden;
-  margin-top:15px;
-}
-
-.loader::after{
-  content:"";
-  display:block;
-  width:40%;
-  height:100%;
-  background:#2563eb;
-  animation:loading 1s infinite ease-in-out;
-}
-
-@keyframes loading{
-  0%{ transform:translateX(-100%); }
-  100%{ transform:translateX(250%); }
-}
-
-.hidden{
-  display:none;
-}
-
-/* Mensagem */
-.msg{
-  margin-top:12px;
-  font-size:14px;
-  text-align:center;
-}
-
-.msg.success{
-  color:#22c55e;
-}
-
-.msg.error{
-  color:#ef4444;
-}
-
-
-/* ===============================
-   USUÁRIO LOGADO
-================================ */
-
-.usuario-logado{
-  margin:4px 0 0;
-  font-size:14px;
-  color:#94a3b8;
-}
 
 .btn-login {
-  position: relative;
-  width: 100%;
-  padding: 12px;
-  background: #2563eb;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  overflow: hidden;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+    position: relative;
+    width: 100%;
+    min-height: 46px;
+    padding: 11px 14px;
+    overflow: hidden;
+
+    background: var(--azul);
+    color: #ffffff;
+
+    border: none;
+    border-radius: 8px;
+
+    font-size: 16px;
+    font-weight: 700;
 }
 
-/* Efeito de pressionar */
+.btn-login:hover {
+    background: var(--azul-hover);
+}
+
 .btn-login:active {
-  transform: scale(0.97);
-  box-shadow: 0 0 0 rgba(0,0,0,0);
+    transform: scale(0.98);
 }
 
-/* Texto */
 .btn-login .btn-text {
-  transition: opacity 0.2s;
+    transition: opacity 0.2s ease;
 }
 
-/* Loader (spinner) */
-.btn-login .loader {
-  width: 22px;
-  height: 22px;
-  border: 3px solid rgba(255,255,255,0.3);
-  border-top: 3px solid white;
-  border-radius: 50%;
-  position: absolute;
-  top: 25%;              /* ← sobe o spinner */
-  left: 50%;
-  transform: translate(-50%, -50%);
-  animation: spin 1s linear infinite;
-  display: none;
-}
-
-
-/* Quando estiver carregando */
 .btn-login.loading .btn-text {
-  opacity: 0;
+    opacity: 0;
+}
+
+.btn-login .loader {
+    display: none;
+
+    width: 21px;
+    height: 21px;
+    margin: 0;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    background: transparent;
+
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+
+    transform: translate(-50%, -50%);
+
+    animation: button-spin 0.8s linear infinite;
 }
 
 .btn-login.loading .loader {
-  display: block;
+    display: block;
 }
 
-@keyframes spin {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
+@keyframes button-spin {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
 }
 
-.admin-actions {
-  margin: 15px 0;
-  text-align: right;
+/* =====================================================
+   CABEÇALHO
+===================================================== */
+
+.topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    padding: 16px 20px;
+
+    background: rgba(16, 24, 34, 0.96);
+
+    border-bottom: 1px solid var(--borda);
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
 }
 
-.btn-frota {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
+.topo h2 {
+    margin: 0;
+    color: var(--texto);
+    font-size: 19px;
 }
 
-.btn-frota:hover {
-  background: #1d4ed8;
+.topo-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
+#adminBtn,
+#logout {
+    min-height: 38px;
+    padding: 8px 13px;
+
+    color: #ffffff;
+
+    border: none;
+    border-radius: 7px;
+
+    font-size: 14px;
+    font-weight: 650;
+}
+
+#adminBtn {
+    display: none;
+    background: #334155;
+}
+
+#adminBtn:hover {
+    background: #475569;
+}
+
+#logout {
+    background: var(--vermelho);
+}
+
+#logout:hover {
+    background: var(--vermelho-hover);
+}
+
+/* =====================================================
+   CONTAINER PRINCIPAL
+===================================================== */
+
+.container {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 22px;
+}
+
+/* =====================================================
+   LISTA DE VEÍCULOS
+===================================================== */
+
+#lista {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+
+    width: 100%;
+    gap: 18px;
+}
+
+/* =====================================================
+   CARD DO VEÍCULO
+===================================================== */
+
+.card {
+    display: flex;
+    flex-direction: column;
+    align-self: start;
+
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    padding: 14px;
+
+    overflow: hidden;
+
+    background: var(--superficie);
+
+    border: 1px solid var(--borda);
+    border-radius: 13px;
+
+    box-shadow: var(--sombra);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.card:hover {
+    background: var(--superficie-hover);
+    border-color: var(--borda-hover);
+    box-shadow: var(--sombra-hover);
+}
+
+/* Imagem do veículo */
+.card img {
+    display: block;
+
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+
+    margin: 0 0 12px;
+    padding: 0;
+
+    object-fit: cover;
+    object-position: center;
+
+    background: #090e14;
+
+    border: 1px solid var(--borda);
+    border-radius: 9px;
+}
+
+/* Nome do veículo */
+.card b {
+    display: block;
+
+    margin: 0 0 8px;
+
+    color: var(--texto);
+
+    font-size: 18px;
+    font-weight: 750;
+    line-height: 1.2;
+    text-align: center;
+
+    overflow-wrap: anywhere;
+}
+
+/* Informações */
+.card p {
+    margin: 3px 0;
+
+    color: var(--texto-secundario);
+
+    font-size: 14px;
+    line-height: 1.35;
+
+    overflow-wrap: anywhere;
+}
+
+.card p:last-of-type {
+    margin-bottom: 10px;
+}
+
+/* =====================================================
+   USUÁRIO QUE ESTÁ COM O VEÍCULO
+===================================================== */
+
+.card .usuario-veiculo {
+    margin-top: 6px;
+    color: var(--texto);
+    font-weight: 600;
+}
+
+/* Somente o nome do usuário */
+.card .usuario-veiculo .nome-usuario,
+.card .usuario-veiculo strong {
+    color: var(--laranja);
+    font-weight: 800;
+    text-transform: capitalize;
+}
+
+/* =====================================================
+   BOTÕES DOS CARDS
+===================================================== */
+
+.card button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 41px;
+
+    margin-top: 7px;
+    padding: 9px 8px;
+
+    color: #ffffff;
+
+    border: none;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.15;
+    text-align: center;
+
+    white-space: normal;
+    word-break: normal;
+
+    transition:
+        background 0.2s ease,
+        transform 0.1s ease;
+}
+
+/* Solicitar ou reservar */
+.card button:first-of-type {
+    background: var(--azul);
+}
+
+.card button:first-of-type:hover:not(:disabled) {
+    background: var(--azul-hover);
+}
+
+/* Devolver */
+.card button:last-of-type {
+    background: var(--verde);
+}
+
+.card button:last-of-type:hover:not(:disabled) {
+    background: var(--verde-hover);
+}
+
+.card button:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+/* Indisponível */
+.card button:disabled,
+.card button.btn-indisponivel,
+.card .btn-indisponivel,
+.btn-indisponivel {
+    background: var(--vermelho) !important;
+    color: #ffffff !important;
+
+    cursor: not-allowed;
+    opacity: 0.82;
+
+    transform: none !important;
+}
+
+
+
+/* =====================================================
+   MURAL DA FROTA
+===================================================== */
 
 .mural-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
-  padding: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 18px;
+    padding: 25px;
 }
 
-/* Card do carro */
 .carro-card {
-  border-radius: 12px;
-  padding: 16px;
-  text-align: center;
-  font-weight: bold;
-  box-shadow: 0 0 10px rgba(0,0,0,.3);
-  transition: transform 0.2s;
+    padding: 16px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 11px;
+
+    box-shadow: var(--sombra);
+
+    font-weight: 700;
+    text-align: center;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .carro-card:hover {
-  transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-hover);
 }
 
-/* Estados */
+.carro-card.disponivel,
 .disponivel {
-  background: #16a34a;
-  color: white;
+    background: var(--verde);
+    color: #ffffff;
 }
 
+.carro-card.ocupado,
 .ocupado {
-  background: #dc2626;
-  color: white;
+    background: var(--vermelho);
+    color: #ffffff;
 }
 
 .carro-nome {
-  font-size: 18px;
+    font-size: 18px;
 }
 
 .carro-status {
-  margin-top: 8px;
-  font-size: 14px;
-  opacity: 0.9;
+    margin-top: 8px;
+    font-size: 14px;
+    opacity: 0.92;
 }
 
+/* Botão voltar */
 .btn-voltar {
-  position: absolute;
-  right: 20px;
-  top: 15px;
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+
+    min-height: 38px;
+    padding: 8px 14px;
+
+    background: var(--azul);
+    color: #ffffff;
+
+    border: none;
+    border-radius: 7px;
+
+    font-weight: 650;
 }
 
-/* ===============================
-   LOADER ADMIN
-================================ */
-
-.admin-loader{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:15px;
-  color:#94a3b8;
+.btn-voltar:hover {
+    background: var(--azul-hover);
 }
 
-.admin-loader.hidden{
-  display:none;
+/* =====================================================
+   LOADER DO ADMINISTRADOR
+===================================================== */
+
+.admin-loader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 15px;
+
+    color: var(--texto-secundario);
 }
 
-.spinner{
-  width:20px;
-  height:20px;
-  border:3px solid #1e293b;
-  border-top:3px solid #2563eb;
-  border-radius:50%;
-  animation: spin 0.8s linear infinite;
+.admin-loader.hidden {
+    display: none;
 }
 
-@keyframes spin{
-  to { transform: rotate(360deg); }
-}
-.usuario-veiculo {
-  color: #ffa600;
-  font-weight: bold;
-  margin-top: 5px;
+.spinner {
+    width: 20px;
+    height: 20px;
+
+    border: 3px solid var(--borda);
+    border-top-color: var(--azul);
+    border-radius: 50%;
+
+    animation: normal-spin 0.8s linear infinite;
 }
 
-/* Mini painel */
+@keyframes normal-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =====================================================
+   MINI PAINEL
+===================================================== */
+
 .mini-painel {
-  display: flex;
-  gap: 10px;
-  margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+
+    margin-top: 8px;
 }
 
 .badge {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: bold;
-  color: white;
+    padding: 6px 12px;
+
+    color: #ffffff;
+
+    border-radius: 20px;
+
+    font-size: 14px;
+    font-weight: 700;
 }
 
 .verde {
-  background-color: #28a745;
+    background: var(--verde);
 }
 
 .vermelha {
-  background-color: #dc3545;
+    background: var(--vermelho);
+}
+
+/* =====================================================
+   RODAPÉ
+===================================================== */
+
+.footer {
+    padding: 18px;
+
+    color: var(--texto-suave);
+
+    border-top: 1px solid var(--borda);
+
+    font-size: 13px;
+    text-align: center;
+}
+
+/* =====================================================
+   TABLETS — 2 COLUNAS
+===================================================== */
+
+@media (max-width: 900px) {
+    .container {
+        padding: 15px;
+    }
+
+    #lista {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+        gap: 13px;
+    }
+
+    .card {
+        height: auto;
+        padding: 12px;
+    }
+
+    .card img {
+        aspect-ratio: 16 / 10;
+    }
+
+    .card b {
+        font-size: 17px;
+    }
+
+    .card p {
+        font-size: 13px;
+    }
+
+    .card button {
+        min-height: 40px;
+        font-size: 13px;
+    }
+
+    .admin-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+/* =====================================================
+   CELULARES — 2 COLUNAS
+===================================================== */
+
+@media (max-width: 600px) {
+    .topo {
+        padding: 12px;
+    }
+
+    .topo h2 {
+        font-size: 17px;
+    }
+
+    #adminBtn,
+    #logout {
+        min-height: 36px;
+        padding: 7px 11px;
+        font-size: 13px;
+    }
+
+    .container {
+        width: 100%;
+        padding: 8px;
+    }
+
+    #lista {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+        gap: 8px;
+    }
+
+    .card {
+        align-self: start;
+
+        width: 100%;
+        min-width: 0;
+        height: auto;
+        min-height: 0;
+        padding: 8px;
+
+        border-radius: 10px;
+    }
+
+    .card img {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 4 / 3;
+
+        margin: 0 0 8px;
+
+        object-fit: cover;
+        object-position: center;
+
+        border-radius: 7px;
+    }
+
+    .card b {
+        min-height: 34px;
+        margin-bottom: 6px;
+
+        font-size: 15px;
+        line-height: 1.12;
+    }
+
+    .card p {
+        margin: 2px 0;
+
+        font-size: 12px;
+        line-height: 1.25;
+    }
+
+    .card p:last-of-type {
+        margin-bottom: 7px;
+    }
+
+    .card .usuario-veiculo {
+        margin-top: 5px;
+    }
+
+    .card button {
+        min-height: 38px;
+        margin-top: 6px;
+        padding: 7px 5px;
+
+        border-radius: 7px;
+
+        font-size: 12px;
+        line-height: 1.1;
+    }
+
+    .admin-container {
+        padding: 20px 10px;
+    }
+
+    .admin-filtros {
+        align-items: stretch;
+    }
+
+    .admin-filtros label,
+    .admin-filtros input,
+    .admin-filtros button {
+        width: 100%;
+    }
+
+    .mural-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .login-card {
+        padding: 25px 20px;
+    }
+}
+
+/* =====================================================
+   CELULARES PEQUENOS
+===================================================== */
+
+@media (max-width: 380px) {
+    .topo {
+        gap: 8px;
+        padding: 10px 8px;
+    }
+
+    .topo h2 {
+        font-size: 15px;
+    }
+
+    #adminBtn,
+    #logout {
+        padding: 7px 9px;
+        font-size: 12px;
+    }
+
+    .container {
+        padding: 6px;
+    }
+
+    #lista {
+        gap: 6px;
+    }
+
+    .card {
+        padding: 6px;
+    }
+
+    .card b {
+        min-height: 30px;
+        font-size: 13px;
+    }
+
+    .card p {
+        font-size: 11px;
+    }
+
+    .card button {
+        min-height: 36px;
+        padding: 6px 4px;
+        font-size: 11px;
+    }
+
+    .badge {
+        padding: 5px 9px;
+        font-size: 12px;
+    }
 }
