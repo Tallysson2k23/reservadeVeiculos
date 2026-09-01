@@ -67,6 +67,10 @@ const lista = document.getElementById("lista");
 const adminBtn = document.getElementById("adminBtn");
 const logoutBtn = document.getElementById("logout");
 const usuarioLogado = document.getElementById("usuarioLogado");
+const botoesCategoria = document.querySelectorAll(".categoria-btn");
+
+let listaVeiculos = [];
+let categoriaAtiva = "carros";
 
 
 /* =====================================================
@@ -100,51 +104,131 @@ async function usuarioJaTemVeiculo(email) {
 ===================================================== */
 async function carregarVeiculos() {
   const snap = await getDocs(collection(db, "veiculos"));
-  lista.innerHTML = "";
+  listaVeiculos = snap.docs.map(documento => ({
+    id: documento.id,
+    ...documento.data()
+  }));
 
-  const listaVeiculos = [];
-
-  snap.forEach(v => {
-    const dados = v.data();
-    listaVeiculos.push(dados);
-
-    const indisponivel = dados.status !== "disponivel";
-
-    lista.innerHTML += `
-      <div class="card">
-        <img src="${dados.imagem}">
-        <b>${dados.modelo}</b>
-        <p>Placa: ${dados.placa}</p>
-        
-${
-    dados.status !== "disponivel" && dados.usuarioAtual
-        ? `
-            <p class="usuario-veiculo">
-                Está com:
-                <strong class="nome-usuario">
-                    ${getNomeUsuario(dados.usuarioAtual)}
-                </strong>
-            </p>
-        `
-        : ""
+  exibirCategoria();
 }
 
-        <button
-          class="${indisponivel ? 'btn-indisponivel' : ''}"
-          ${indisponivel ? "disabled" : ""}
-          onclick="solicitar('${v.id}')">
-          ${indisponivel ? "INDISPONÍVEL" : "Solicitar"}
-        </button>
 
-        <button onclick="devolver('${v.id}')">
-          Devolver
-        </button>
-      </div>
-    `;
+/* =====================================================
+   FILTRAR CARROS, MOTOS E CAPACETES
+===================================================== */
+function exibirCategoria() {
+  const itensVisiveis = listaVeiculos.filter(item => {
+    const tipo = identificarTipo(item);
+
+    if (categoriaAtiva === "carros") {
+      return tipo === "carro";
+    }
+
+    return tipo === "moto" || tipo === "capacete";
   });
 
-  atualizarPainel(listaVeiculos);
+  lista.innerHTML = itensVisiveis.length
+    ? itensVisiveis.map(criarCard).join("")
+    : `<p class="lista-vazia">Nenhum item cadastrado nesta categoria.</p>`;
+
+  atualizarPainel(itensVisiveis);
 }
+
+function criarCard(item) {
+  const indisponivel = item.status !== "disponivel";
+  const tipo = identificarTipo(item);
+  const nome = escaparHTML(item.modelo || "Item sem nome");
+  const imagem = escaparHTML(item.imagem || "");
+  const id = escaparHTML(item.id);
+  const identificacao = escaparHTML(
+    item.identificacao || item.placa || "Não informada"
+  );
+  const rotuloIdentificacao = tipo === "capacete" ? "Identificação" : "Placa";
+
+  return `
+    <div class="card">
+      <img src="${imagem}" alt="${nome}">
+      <b>${nome}</b>
+      <p>${rotuloIdentificacao}: ${identificacao}</p>
+
+      ${
+        indisponivel && item.usuarioAtual
+          ? `
+              <p class="usuario-veiculo">
+                Está com:
+                <strong class="nome-usuario">
+                  ${escaparHTML(getNomeUsuario(item.usuarioAtual))}
+                </strong>
+              </p>
+            `
+          : ""
+      }
+
+      <button
+        class="${indisponivel ? "btn-indisponivel" : ""}"
+        ${indisponivel ? "disabled" : ""}
+        data-acao="solicitar"
+        data-id="${id}">
+        ${indisponivel ? "INDISPONÍVEL" : "Solicitar"}
+      </button>
+
+      <button data-acao="devolver" data-id="${id}">
+        Devolver
+      </button>
+    </div>
+  `;
+}
+
+function identificarTipo(item) {
+  const tipoCadastrado = normalizarTexto(item.tipo || item.categoria || "");
+
+  if (tipoCadastrado.includes("capacete")) return "capacete";
+  if (tipoCadastrado === "moto" || tipoCadastrado === "motocicleta") return "moto";
+  if (tipoCadastrado === "carro" || tipoCadastrado === "automovel") return "carro";
+
+  // Mantém compatibilidade com itens antigos que ainda não possuem o campo "tipo".
+  const descricao = normalizarTexto(`${item.modelo || ""} ${item.descricao || ""}`);
+
+  if (descricao.includes("capacete")) return "capacete";
+
+  const nomesComunsDeMoto = /\b(moto|motocicleta|pop|biz|bros|titan|fan|factor|fazer|start|xre|cg)\b/;
+  if (nomesComunsDeMoto.test(descricao)) return "moto";
+
+  return "carro";
+}
+
+function normalizarTexto(valor) {
+  return String(valor)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+botoesCategoria.forEach(botao => {
+  botao.addEventListener("click", () => {
+    categoriaAtiva = botao.dataset.categoria;
+
+    botoesCategoria.forEach(opcao => {
+      const estaAtiva = opcao === botao;
+      opcao.classList.toggle("ativa", estaAtiva);
+      opcao.setAttribute("aria-pressed", String(estaAtiva));
+    });
+
+    exibirCategoria();
+  });
+});
+
+lista.addEventListener("click", evento => {
+  const botao = evento.target.closest("button[data-acao]");
+  if (!botao || botao.disabled) return;
+
+  const acao = botao.dataset.acao;
+  const id = botao.dataset.id;
+
+  if (acao === "solicitar") window.solicitar(id);
+  if (acao === "devolver") window.devolver(id);
+});
 
 
 /* =====================================================
@@ -245,6 +329,15 @@ auth.onAuthStateChanged(async (user) => {
 function getNomeUsuario(email) {
   if (!email) return "";
   return email.split("@")[0];
+}
+
+function escaparHTML(valor) {
+  return String(valor)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 function atualizarPainel(listaVeiculos) {
