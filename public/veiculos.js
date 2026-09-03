@@ -86,16 +86,47 @@ if (logoutBtn) {
 
 
 /* =====================================================
-   VERIFICA SE USUÁRIO JÁ TEM VEÍCULO ATIVO
+   ITENS QUE O USUÁRIO ESTÁ UTILIZANDO
 ===================================================== */
-async function usuarioJaTemVeiculo(email) {
+async function buscarItensEmUso(email) {
   const q = query(
     collection(db, "veiculos"),
     where("usuarioAtual", "==", email)
   );
 
   const snap = await getDocs(q);
-  return !snap.empty;
+  return snap.docs.map(documento => ({
+    id: documento.id,
+    ...documento.data()
+  }));
+}
+
+function validarNovaSolicitacao(itemSolicitado, itensEmUso) {
+  const tipoSolicitado = identificarTipo(itemSolicitado);
+  const tiposEmUso = itensEmUso.map(identificarTipo);
+  const temCapacete = tiposEmUso.includes("capacete");
+  const temMoto = tiposEmUso.includes("moto");
+  const temCarro = tiposEmUso.includes("carro");
+
+  if (tipoSolicitado === "capacete") {
+    if (temCapacete) {
+      return {
+        permitido: false,
+        mensagem: "Você já possui um capacete em uso. Devolva-o antes de solicitar outro."
+      };
+    }
+
+    return { permitido: true };
+  }
+
+  if (temMoto || temCarro) {
+    return {
+      permitido: false,
+      mensagem: "Você já possui um veículo em uso. Devolva-o antes de solicitar outro."
+    };
+  }
+
+  return { permitido: true };
 }
 
 
@@ -241,13 +272,36 @@ window.solicitar = async (id) => {
     return;
   }
 
-  const jaTem = await usuarioJaTemVeiculo(user.email);
-  if (jaTem) {
-    alert("Você já possui um veículo em uso. Devolva antes de solicitar outro.");
+  const veiculoRef = doc(db, "veiculos", id);
+  const [veiculoSnap, itensEmUso] = await Promise.all([
+    getDoc(veiculoRef),
+    buscarItensEmUso(user.email)
+  ]);
+
+  if (!veiculoSnap.exists()) {
+    alert("Este item não foi encontrado.");
+    carregarVeiculos();
     return;
   }
 
-  await updateDoc(doc(db, "veiculos", id), {
+  const itemSolicitado = {
+    id: veiculoSnap.id,
+    ...veiculoSnap.data()
+  };
+
+  if (itemSolicitado.status !== "disponivel") {
+    alert("Este item não está mais disponível.");
+    carregarVeiculos();
+    return;
+  }
+
+  const validacao = validarNovaSolicitacao(itemSolicitado, itensEmUso);
+  if (!validacao.permitido) {
+    alert(validacao.mensagem);
+    return;
+  }
+
+  await updateDoc(veiculoRef, {
     status: "indisponivel",
     usuarioAtual: user.email
   });
