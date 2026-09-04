@@ -1,14 +1,15 @@
 import { getMessaging, getToken, onMessage } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
-import { db, auth } from "./firebase.js";
+import { db, auth, functions } from "./firebase.js";
 
 import {
-  collection, getDocs, doc, updateDoc, addDoc,
-  serverTimestamp, getDoc, query, where, setDoc
+  collection, getDocs, doc, getDoc, updateDoc, addDoc,
+  serverTimestamp, query, where, setDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 import { signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { httpsCallable } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js";
 
 
 /* =====================================================
@@ -65,12 +66,17 @@ onMessage(messaging, (payload) => {
 
 const lista = document.getElementById("lista");
 const adminBtn = document.getElementById("adminBtn");
+const cadastroBtn = document.getElementById("cadastroBtn");
 const logoutBtn = document.getElementById("logout");
 const usuarioLogado = document.getElementById("usuarioLogado");
 const botoesCategoria = document.querySelectorAll(".categoria-btn");
 
 let listaVeiculos = [];
 let categoriaAtiva = "carros";
+let usuarioEhAdmin = false;
+let emailUsuarioAtual = "";
+
+const ADMIN_EMAIL = "admin@gmail.com";
 
 
 /* =====================================================
@@ -82,51 +88,6 @@ if (logoutBtn) {
       window.location.href = "index.html";
     });
   };
-}
-
-
-/* =====================================================
-   ITENS QUE O USUÁRIO ESTÁ UTILIZANDO
-===================================================== */
-async function buscarItensEmUso(email) {
-  const q = query(
-    collection(db, "veiculos"),
-    where("usuarioAtual", "==", email)
-  );
-
-  const snap = await getDocs(q);
-  return snap.docs.map(documento => ({
-    id: documento.id,
-    ...documento.data()
-  }));
-}
-
-function validarNovaSolicitacao(itemSolicitado, itensEmUso) {
-  const tipoSolicitado = identificarTipo(itemSolicitado);
-  const tiposEmUso = itensEmUso.map(identificarTipo);
-  const temCapacete = tiposEmUso.includes("capacete");
-  const temMoto = tiposEmUso.includes("moto");
-  const temCarro = tiposEmUso.includes("carro");
-
-  if (tipoSolicitado === "capacete") {
-    if (temCapacete) {
-      return {
-        permitido: false,
-        mensagem: "Você já possui um capacete em uso. Devolva-o antes de solicitar outro."
-      };
-    }
-
-    return { permitido: true };
-  }
-
-  if (temMoto || temCarro) {
-    return {
-      permitido: false,
-      mensagem: "Você já possui um veículo em uso. Devolva-o antes de solicitar outro."
-    };
-  }
-
-  return { permitido: true };
 }
 
 
@@ -143,6 +104,92 @@ async function carregarVeiculos() {
   exibirCategoria();
 }
 
+/* Mantém o sistema funcionando até as Cloud Functions serem publicadas. */
+function funcaoServidorIndisponivel(error) {
+  return error?.code === "functions/not-found"
+    || error?.code === "functions/internal"
+    || /not found|404/i.test(String(error?.message || ""));
+}
+
+async function buscarItensEmUso(email) {
+  const consulta = query(
+    collection(db, "veiculos"),
+    where("usuarioAtual", "==", email)
+  );
+  const snapshot = await getDocs(consulta);
+  return snapshot.docs.map(documento => ({
+    id: documento.id,
+    ...documento.data()
+  }));
+}
+
+function validarNovaSolicitacao(itemSolicitado, itensEmUso) {
+  const tipoSolicitado = identificarTipo(itemSolicitado);
+  const tiposEmUso = itensEmUso.map(identificarTipo);
+
+  if (tipoSolicitado === "capacete") {
+    return tiposEmUso.includes("capacete")
+      ? { permitido: false, mensagem: "Você já possui um capacete em uso." }
+      : { permitido: true };
+  }
+
+  const jaTemVeiculo = tiposEmUso.includes("moto") || tiposEmUso.includes("carro");
+  return jaTemVeiculo
+    ? { permitido: false, mensagem: "Você já possui um veículo em uso." }
+    : { permitido: true };
+}
+
+async function solicitarDiretamente(id, user) {
+  const veiculoRef = doc(db, "veiculos", id);
+  const [veiculoSnap, itensEmUso] = await Promise.all([
+    getDoc(veiculoRef),
+    buscarItensEmUso(user.email)
+  ]);
+
+  if (!veiculoSnap.exists()) throw new Error("ITEM_NAO_ENCONTRADO");
+
+  const item = { id: veiculoSnap.id, ...veiculoSnap.data() };
+  if (item.status !== "disponivel") throw new Error("ITEM_INDISPONIVEL");
+
+  const validacao = validarNovaSolicitacao(item, itensEmUso);
+  if (!validacao.permitido) throw new Error(validacao.mensagem);
+
+  await updateDoc(veiculoRef, {
+    status: "indisponivel",
+    usuarioAtual: String(user.email || "").trim().toLowerCase()
+  });
+  await addDoc(collection(db, "solicitacoes"), {
+    veiculo: id,
+    usuario: String(user.email || "").trim().toLowerCase(),
+    tipo: "retirada",
+    data: serverTimestamp()
+  });
+}
+
+async function devolverDiretamente(id, user) {
+  const veiculoRef = doc(db, "veiculos", id);
+  const veiculoSnap = await getDoc(veiculoRef);
+  if (!veiculoSnap.exists()) throw new Error("ITEM_NAO_ENCONTRADO");
+
+  const dados = veiculoSnap.data();
+  const email = String(user.email || "").trim().toLowerCase();
+  const responsavel = String(dados.usuarioAtual || "").trim().toLowerCase();
+
+  if (email !== ADMIN_EMAIL && email !== responsavel) {
+    throw new Error("SEM_PERMISSAO");
+  }
+
+  await updateDoc(veiculoRef, { status: "disponivel", usuarioAtual: null });
+  await addDoc(collection(db, "solicitacoes"), {
+    veiculo: id,
+    usuario: responsavel || "Usuário não informado",
+    tipo: email === ADMIN_EMAIL && email !== responsavel
+      ? "devolucao_admin"
+      : "devolucao",
+    devolvidoPor: email,
+    data: serverTimestamp()
+  });
+}
 
 /* =====================================================
    FILTRAR CARROS, MOTOS E CAPACETES
@@ -203,9 +250,14 @@ function criarCard(item) {
         ${indisponivel ? "INDISPONÍVEL" : "Solicitar"}
       </button>
 
-      <button data-acao="devolver" data-id="${id}">
-        Devolver
-      </button>
+      ${
+        indisponivel && (
+          usuarioEhAdmin
+          || normalizarTexto(item.usuarioAtual) === emailUsuarioAtual
+        )
+          ? `<button data-acao="devolver" data-id="${id}">Devolver</button>`
+          : ""
+      }
     </div>
   `;
 }
@@ -272,48 +324,39 @@ window.solicitar = async (id) => {
     return;
   }
 
-  const veiculoRef = doc(db, "veiculos", id);
-  const [veiculoSnap, itensEmUso] = await Promise.all([
-    getDoc(veiculoRef),
-    buscarItensEmUso(user.email)
-  ]);
+  try {
+    const solicitarItem = httpsCallable(functions, "solicitarItem");
+    await solicitarItem({ veiculoId: id });
+    await carregarVeiculos();
+  } catch (error) {
+    if (funcaoServidorIndisponivel(error)) {
+      try {
+        await solicitarDiretamente(id, user);
+        await carregarVeiculos();
+        return;
+      } catch (erroDireto) {
+        const mensagensDiretas = {
+          ITEM_NAO_ENCONTRADO: "Este item não foi encontrado.",
+          ITEM_INDISPONIVEL: "Este item não está mais disponível."
+        };
+        alert(mensagensDiretas[erroDireto.message] || erroDireto.message || "Não foi possível solicitar o item.");
+        console.error("Erro ao solicitar diretamente:", erroDireto);
+        await carregarVeiculos();
+        return;
+      }
+    }
 
-  if (!veiculoSnap.exists()) {
-    alert("Este item não foi encontrado.");
-    carregarVeiculos();
-    return;
+    const mensagens = {
+      "functions/not-found": "Este item não foi encontrado.",
+      "functions/already-exists": "Este item não está mais disponível.",
+      "functions/failed-precondition": error.message || "Você já atingiu o limite de itens em uso.",
+      "functions/unauthenticated": "Sua sessão expirou. Entre novamente."
+    };
+
+    alert(mensagens[error.code] || "Não foi possível solicitar o item.");
+    console.error("Erro ao solicitar item:", error);
+    await carregarVeiculos();
   }
-
-  const itemSolicitado = {
-    id: veiculoSnap.id,
-    ...veiculoSnap.data()
-  };
-
-  if (itemSolicitado.status !== "disponivel") {
-    alert("Este item não está mais disponível.");
-    carregarVeiculos();
-    return;
-  }
-
-  const validacao = validarNovaSolicitacao(itemSolicitado, itensEmUso);
-  if (!validacao.permitido) {
-    alert(validacao.mensagem);
-    return;
-  }
-
-  await updateDoc(veiculoRef, {
-    status: "indisponivel",
-    usuarioAtual: user.email
-  });
-
-  await addDoc(collection(db, "solicitacoes"), {
-    veiculo: id,
-    usuario: user.email,
-    tipo: "retirada",
-    data: serverTimestamp()
-  });
-
-  carregarVeiculos();
 };
 
 
@@ -322,33 +365,41 @@ window.solicitar = async (id) => {
 ===================================================== */
 window.devolver = async (id) => {
   const user = auth.currentUser;
-  if (!user) return;
-
-  const veiculoRef = doc(db, "veiculos", id);
-  const veiculoSnap = await getDoc(veiculoRef);
-
-  if (!veiculoSnap.exists()) return;
-
-  const dados = veiculoSnap.data();
-
-  if (dados.usuarioAtual !== user.email) {
-    alert("Você não pode devolver um veículo que não foi solicitado por você.");
+  if (!user) {
+    alert("Faça login novamente.");
     return;
   }
 
-  await updateDoc(veiculoRef, {
-    status: "disponivel",
-    usuarioAtual: null
-  });
+  try {
+    const devolverItem = httpsCallable(functions, "devolverItem");
+    await devolverItem({ veiculoId: id });
+    await carregarVeiculos();
+  } catch (error) {
+    if (funcaoServidorIndisponivel(error)) {
+      try {
+        await devolverDiretamente(id, user);
+        await carregarVeiculos();
+        return;
+      } catch (erroDireto) {
+        const mensagensDiretas = {
+          ITEM_NAO_ENCONTRADO: "Este item não foi encontrado.",
+          SEM_PERMISSAO: "Você só pode devolver os itens solicitados por você."
+        };
+        alert(mensagensDiretas[erroDireto.message] || "Não foi possível devolver o item.");
+        console.error("Erro ao devolver diretamente:", erroDireto);
+        return;
+      }
+    }
 
-  await addDoc(collection(db, "solicitacoes"), {
-    veiculo: id,
-    usuario: user.email,
-    tipo: "devolucao",
-    data: serverTimestamp()
-  });
+    const mensagens = {
+      "functions/permission-denied": "Somente quem solicitou o item ou o administrador pode devolvê-lo.",
+      "functions/not-found": "Este item não foi encontrado.",
+      "functions/failed-precondition": "Este item já está disponível."
+    };
 
-  carregarVeiculos();
+    alert(mensagens[error.code] || "Não foi possível devolver o item.");
+    console.error("Erro ao devolver item:", error);
+  }
 };
 
 
@@ -356,7 +407,10 @@ window.devolver = async (id) => {
    ADMIN + ATIVAR NOTIFICAÇÃO APÓS LOGIN
 ===================================================== */
 auth.onAuthStateChanged(async (user) => {
-  if (!user) return;
+  if (!user) {
+    window.location.href = "index.html";
+    return;
+  }
 
   // 🔔 Ativa notificação quando usuário estiver logado
   ativarNotificacoes();
@@ -365,14 +419,15 @@ auth.onAuthStateChanged(async (user) => {
     usuarioLogado.textContent = `Usuário: ${user.email}`;
   }
 
-  if (adminBtn) {
-    const ref = doc(db, "admins", user.email);
-    const snap = await getDoc(ref);
+  emailUsuarioAtual = String(user.email || "").trim().toLowerCase();
+  usuarioEhAdmin = emailUsuarioAtual === ADMIN_EMAIL;
 
-    if (snap.exists()) {
-      adminBtn.style.display = "block";
-    }
+  if (usuarioEhAdmin) {
+    if (adminBtn) adminBtn.style.display = "block";
+    if (cadastroBtn) cadastroBtn.style.display = "block";
   }
+
+  await carregarVeiculos();
 });
 
 
@@ -409,5 +464,3 @@ function atualizarPainel(listaVeiculos) {
   document.getElementById("qtdDisponiveis").textContent = disponiveis;
   document.getElementById("qtdReservados").textContent = reservados;
 }
-
-carregarVeiculos();

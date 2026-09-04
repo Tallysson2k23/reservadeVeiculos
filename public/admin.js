@@ -38,14 +38,9 @@ let carregando = false;
 
 async function verificarAdmin(user) {
     try {
-        if (!user?.email) {
-            return false;
-        }
+        const email = String(user?.email || "").trim().toLowerCase();
 
-        const ref = doc(db, "admins", user.email);
-        const snap = await getDoc(ref);
-
-        if (!snap.exists()) {
+        if (email !== "admin@gmail.com") {
             alert("Acesso negado");
             window.location.href = "veiculos.html";
             return false;

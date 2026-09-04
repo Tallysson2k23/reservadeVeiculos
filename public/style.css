@@ -371,6 +371,7 @@ img {
     gap: 8px;
 }
 
+#cadastroBtn,
 #adminBtn,
 #logout {
     min-height: 38px;
@@ -385,11 +386,13 @@ img {
     font-weight: 650;
 }
 
+#cadastroBtn,
 #adminBtn {
     display: none;
     background: #334155;
 }
 
+#cadastroBtn:hover,
 #adminBtn:hover {
     background: #475569;
 }
@@ -872,6 +875,7 @@ img {
         font-size: 17px;
     }
 
+    #cadastroBtn,
     #adminBtn,
     #logout {
         min-height: 36px;
@@ -998,6 +1002,7 @@ img {
         font-size: 15px;
     }
 
+    #cadastroBtn,
     #adminBtn,
     #logout {
         padding: 7px 9px;

@@ -1,105 +1,112 @@
-import { auth } from "./firebase.js";
+import { auth, functions } from "./firebase.js";
 import {
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   setPersistence,
   browserLocalPersistence,
-  browserSessionPersistence
+  browserSessionPersistence,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { httpsCallable } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js";
+
+const ADMIN_EMAIL = "admin@gmail.com";
 
 const email = document.getElementById("email");
 const senha = document.getElementById("senha");
 const loginBtn = document.getElementById("login");
 const cadastrarBtn = document.getElementById("cadastrar");
 const rememberMe = document.getElementById("rememberMe");
-
 const loader = document.getElementById("loader");
 const msg = document.getElementById("msg");
 
-/* ===============================
-   LOGIN
-================================ */
+function emailNormalizado(user) {
+  return String(user?.email || "").trim().toLowerCase();
+}
 
 if (loginBtn) {
-  loginBtn.onclick = async () => {
+  loginBtn.addEventListener("click", async () => {
     try {
-      const persistence = rememberMe && rememberMe.checked
+      loginBtn.classList.add("loading");
+      loginBtn.disabled = true;
+
+      const persistence = rememberMe?.checked
         ? browserLocalPersistence
         : browserSessionPersistence;
 
       await setPersistence(auth, persistence);
-
-      await signInWithEmailAndPassword(auth, email.value, senha.value);
+      await signInWithEmailAndPassword(auth, email.value.trim(), senha.value);
       window.location.href = "veiculos.html";
-
     } catch (error) {
-      alert("Erro ao fazer login");
-      console.error(error.message);
+      alert("Email ou senha inválidos.");
+      console.error("Erro ao fazer login:", error);
+      loginBtn.classList.remove("loading");
+      loginBtn.disabled = false;
     }
-  };
+  });
 }
 
-/* ===============================
-   CADASTRO COM LOADER
-================================ */
-
+/* Cadastro feito no servidor para não trocar a sessão do administrador. */
 if (cadastrarBtn) {
-  cadastrarBtn.onclick = async () => {
+  cadastrarBtn.disabled = true;
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = "index.html";
+      return;
+    }
+
+    if (emailNormalizado(user) !== ADMIN_EMAIL) {
+      alert("Somente o administrador pode criar usuários.");
+      window.location.href = "veiculos.html";
+      return;
+    }
+
+    cadastrarBtn.disabled = false;
+  });
+
+  cadastrarBtn.addEventListener("click", async () => {
     msg.textContent = "";
     msg.className = "msg";
 
-    if (!email.value || !senha.value) {
-      msg.textContent = "Preencha email e senha";
+    const novoEmail = email.value.trim().toLowerCase();
+    const novaSenha = senha.value;
+
+    if (!novoEmail || !novaSenha) {
+      msg.textContent = "Preencha email e senha.";
       msg.classList.add("error");
       return;
     }
 
-    if (senha.value.length < 6) {
-      msg.textContent = "Senha mínima de 6 caracteres";
+    if (novaSenha.length < 6) {
+      msg.textContent = "A senha deve ter no mínimo 6 caracteres.";
       msg.classList.add("error");
       return;
     }
 
     try {
       cadastrarBtn.disabled = true;
-      loader.classList.remove("hidden");
+      loader?.classList.remove("hidden");
 
-      await createUserWithEmailAndPassword(
-        auth,
-        email.value,
-        senha.value
-      );
+      const criarUsuario = httpsCallable(functions, "criarUsuario");
+      await criarUsuario({ email: novoEmail, senha: novaSenha });
 
-      msg.textContent = "Cadastro realizado com sucesso!";
+      msg.textContent = "Usuário criado com sucesso!";
       msg.classList.add("success");
-
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 1500);
-
+      email.value = "";
+      senha.value = "";
     } catch (error) {
-      msg.textContent = "Erro ao cadastrar usuário";
+      const mensagens = {
+        "functions/already-exists": "Este email já está cadastrado.",
+        "functions/invalid-argument": "Confira o email e a senha informados.",
+        "functions/permission-denied": "Somente o administrador pode criar usuários.",
+        "functions/unauthenticated": "Sua sessão expirou. Entre novamente."
+      };
+
+      msg.textContent = mensagens[error.code] || "Não foi possível criar o usuário.";
       msg.classList.add("error");
-      console.error(error.message);
+      console.error("Erro ao cadastrar usuário:", error);
     } finally {
-      loader.classList.add("hidden");
+      loader?.classList.add("hidden");
       cadastrarBtn.disabled = false;
     }
-  };
+  });
 }
-const botao = document.getElementById("login");
-
-botao.addEventListener("click", () => {
-  botao.classList.add("loading");
-  botao.disabled = true;
-
-  // Simula o tempo de login (substitua pela sua lógica real)
-  setTimeout(() => {
-    // Aqui você faz a validação, redireciona, etc.
-    // Exemplo:
-    // window.location.href = "dashboard.html";
-
-    botao.classList.remove("loading");
-    botao.disabled = false;
-  }, 2000);
-});

@@ -1,0 +1,44 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function autenticado() {
+      return request.auth != null && request.auth.token.email != null;
+    }
+
+    function administrador() {
+      return autenticado() && request.auth.token.email == "admin@gmail.com";
+    }
+
+    match /veiculos/{veiculoId} {
+      allow read: if autenticado();
+      // Solicitações e devoluções passam pelas funções protegidas do servidor.
+      allow write: if false;
+    }
+
+    match /solicitacoes/{solicitacaoId} {
+      allow read: if administrador();
+      allow write: if false;
+    }
+
+    match /tokens/{usuarioId} {
+      allow create, update: if autenticado()
+        && request.auth.uid == usuarioId
+        && request.resource.data.email == request.auth.token.email;
+      allow delete: if autenticado() && request.auth.uid == usuarioId;
+      allow read: if false;
+    }
+
+    match /admins/{documento} {
+      allow read, write: if false;
+    }
+
+    match /usuariosEmUso/{usuarioId} {
+      allow read, write: if false;
+    }
+
+    match /{documento=**} {
+      allow read, write: if false;
+    }
+  }
+}
