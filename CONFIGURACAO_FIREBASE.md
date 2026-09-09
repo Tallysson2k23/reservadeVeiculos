@@ -1,33 +1,34 @@
-# Ativação das regras administrativas
+# Configuração do Firebase
 
-As alterações do site dependem das Cloud Functions e das regras do Firestore deste repositório.
+## Cadastro de usuários sem Cloud Functions
 
-## 1. Bloquear cadastro direto de usuários
+A página public/cadastro.html cria contas diretamente no Firebase Authentication.
+Não é necessário publicar a função criarUsuario nem ativar o plano Blaze para esse cadastro.
+Qualquer pessoa pode acessar a página, mesmo sem login. O botão NOVO USUÁRIO
+continua visível apenas para admin@gmail.com na tela de veículos.
 
-No console do Google Cloud/Firebase, ative o **Firebase Authentication with Identity Platform** e, nas configurações de autenticação, desative a criação e a exclusão de conta pelo usuário final (**User actions / Enable create** e **Enable delete**).
+No Firebase Console, em Authentication, mantenha o provedor Email/senha habilitado.
+Se a criação de contas pelo usuário final foi desativada anteriormente nas
+configurações do Identity Platform (User actions / Enable create), habilite-a novamente.
 
-Essa configuração impede cadastros feitos diretamente pela API pública. O administrador continua conseguindo criar contas pela tela protegida do sistema, pois ela usa o Firebase Admin SDK no servidor.
+O cadastro usa uma instância temporária com autenticação apenas em memória para
+preservar a sessão atual. A nova conta poderá entrar pela tela de login normalmente.
 
-## 2. Instalar e publicar o backend
+Para testar localmente, recarregue cadastro.html pelo Live Server. Para atualizar
+o site hospedado, publique os arquivos da pasta public pelo processo de hospedagem
+usado pelo projeto.
 
-Na raiz do projeto:
+## Conferência
 
-```powershell
-npm --prefix functions install
-npx firebase-tools login
-npx firebase-tools deploy --only functions,firestore:rules
-```
+- Como admin@gmail.com, verificar o botão NOVO USUÁRIO e cadastrar uma conta.
+- Confirmar que o administrador continua conectado após o cadastro.
+- Como usuário comum, confirmar que o botão não aparece na tela de veículos.
+- Abrir cadastro.html diretamente, sem login, e conferir que a página permanece acessível.
+- Conferir mensagens para email já cadastrado, email inválido, senha fraca e falha de conexão.
 
-Depois, publique os arquivos da pasta `public` pelo processo de hospedagem já usado pelo projeto. Se o site também estiver no Firebase Hosting, use:
+## Demais recursos
 
-```powershell
-npx firebase-tools deploy --only hosting
-```
-
-## 3. Conferência
-
-- Entrar como um usuário comum: não deve aparecer cadastro; a devolução deve aparecer somente nos itens solicitados por ele.
-- Entrar como `admin@gmail.com`: devem aparecer **NOVO USUÁRIO**, **ADMIN** e a devolução de qualquer item em uso.
-- Criar um usuário pela tela **NOVO USUÁRIO** e confirmar que a sessão do administrador continua ativa.
-- Conferir no histórico uma retirada e uma `devolucao`; quando o administrador devolver o item de outra pessoa, conferir uma `devolucao_admin`.
-- Após as 23h no fuso `America/Sao_Paulo`, conferir uma `devolucao_automatica` para cada item que estava indisponível.
+As regras do Firestore e as funções de retirada, devolução e devolução automática
+são configurações separadas. Esta alteração libera apenas o cadastro direto;
+não muda as permissões dos veículos nem publica funções. O código de funções
+permanece na pasta functions, mas a tela de cadastro não chama mais criarUsuario.

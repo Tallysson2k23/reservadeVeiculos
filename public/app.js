@@ -1,14 +1,14 @@
-import { auth, functions } from "./firebase.js";
+import { app, auth } from "./firebase.js";
+import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   signInWithEmailAndPassword,
   setPersistence,
   browserLocalPersistence,
   browserSessionPersistence,
-  onAuthStateChanged
+  createUserWithEmailAndPassword,
+  initializeAuth,
+  inMemoryPersistence
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { httpsCallable } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js";
-
-const ADMIN_EMAIL = "admin@gmail.com";
 
 const email = document.getElementById("email");
 const senha = document.getElementById("senha");
@@ -17,10 +17,6 @@ const cadastrarBtn = document.getElementById("cadastrar");
 const rememberMe = document.getElementById("rememberMe");
 const loader = document.getElementById("loader");
 const msg = document.getElementById("msg");
-
-function emailNormalizado(user) {
-  return String(user?.email || "").trim().toLowerCase();
-}
 
 if (loginBtn) {
   loginBtn.addEventListener("click", async () => {
@@ -44,26 +40,10 @@ if (loginBtn) {
   });
 }
 
-/* Cadastro feito no servidor para não trocar a sessão do administrador. */
+/* A instância temporária preserva a sessão de quem está cadastrando. */
 if (cadastrarBtn) {
-  cadastrarBtn.disabled = true;
-
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      window.location.href = "index.html";
-      return;
-    }
-
-    if (emailNormalizado(user) !== ADMIN_EMAIL) {
-      alert("Somente o administrador pode criar usuários.");
-      window.location.href = "veiculos.html";
-      return;
-    }
-
-    cadastrarBtn.disabled = false;
-  });
-
   cadastrarBtn.addEventListener("click", async () => {
+    if (cadastrarBtn.disabled) return;
     msg.textContent = "";
     msg.className = "msg";
 
@@ -82,12 +62,14 @@ if (cadastrarBtn) {
       return;
     }
 
+    let cadastroApp;
     try {
       cadastrarBtn.disabled = true;
       loader?.classList.remove("hidden");
 
-      const criarUsuario = httpsCallable(functions, "criarUsuario");
-      await criarUsuario({ email: novoEmail, senha: novaSenha });
+      cadastroApp = initializeApp(app.options, "cadastro-temporario");
+      const cadastroAuth = initializeAuth(cadastroApp, { persistence: inMemoryPersistence });
+      await createUserWithEmailAndPassword(cadastroAuth, novoEmail, novaSenha);
 
       msg.textContent = "Usuário criado com sucesso!";
       msg.classList.add("success");
@@ -95,16 +77,25 @@ if (cadastrarBtn) {
       senha.value = "";
     } catch (error) {
       const mensagens = {
-        "functions/already-exists": "Este email já está cadastrado.",
-        "functions/invalid-argument": "Confira o email e a senha informados.",
-        "functions/permission-denied": "Somente o administrador pode criar usuários.",
-        "functions/unauthenticated": "Sua sessão expirou. Entre novamente."
+        "auth/email-already-in-use": "Este email já está cadastrado.",
+        "auth/invalid-email": "Informe um email válido.",
+        "auth/weak-password": "Use uma senha mais forte, com pelo menos 6 caracteres.",
+        "auth/password-does-not-meet-requirements": "A senha não atende aos requisitos. Use uma senha mais forte.",
+        "auth/operation-not-allowed": "Habilite o cadastro por email e senha no Firebase Authentication.",
+        "auth/admin-restricted-operation": "A criação de contas está desativada no Firebase. Habilite o cadastro nas configurações de autenticação.",
+        "auth/network-request-failed": "Falha de conexão. Verifique sua internet e tente novamente.",
+        "auth/too-many-requests": "Muitas tentativas de cadastro. Aguarde um pouco e tente novamente."
       };
 
       msg.textContent = mensagens[error.code] || "Não foi possível criar o usuário.";
       msg.classList.add("error");
       console.error("Erro ao cadastrar usuário:", error);
     } finally {
+      if (cadastroApp) {
+        await deleteApp(cadastroApp).catch((error) => {
+          console.error("Erro ao encerrar a instância temporária de cadastro:", error);
+        });
+      }
       loader?.classList.add("hidden");
       cadastrarBtn.disabled = false;
     }
