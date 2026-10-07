@@ -76,7 +76,7 @@ let categoriaAtiva = "carros";
 let usuarioEhAdmin = false;
 let emailUsuarioAtual = "";
 
-const ADMIN_EMAIL = "admin@gmail.com";
+const ADMIN_EMAIL = "adm@adm.com";
 
 
 /* =====================================================

@@ -7,7 +7,7 @@ service cloud.firestore {
     }
 
     function administrador() {
-      return autenticado() && request.auth.token.email == "admin@gmail.com";
+      return autenticado() && request.auth.token.email == "adm@adm.com";
     }
 
     match /veiculos/{veiculoId} {

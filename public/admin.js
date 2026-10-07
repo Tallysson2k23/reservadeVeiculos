@@ -40,7 +40,7 @@ async function verificarAdmin(user) {
     try {
         const email = String(user?.email || "").trim().toLowerCase();
 
-        if (email !== "admin@gmail.com") {
+        if (email !== "adm@adm.com") {
             alert("Acesso negado");
             window.location.href = "veiculos.html";
             return false;
