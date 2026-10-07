@@ -9,7 +9,7 @@ initializeApp();
 setGlobalOptions({ region: "southamerica-east1", maxInstances: 10 });
 
 const db = getFirestore();
-const ADMIN_EMAIL = "admin@gmail.com";
+const ADMIN_EMAIL = "adm@adm.com";
 
 function emailDoUsuario(request) {
   return String(request.auth?.token?.email || "").trim().toLowerCase();
